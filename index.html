@@ -275,36 +275,22 @@
             // --- DATA LOADING FUNCTIONS ---
             async function loadDevices() {
                 try {
-                    console.log('Loading devices from API...');
-                    const response = await fetch('/api/devices');
+                    console.log('Loading devices from local file...');
+                    const response = await fetch('devices.json');
                     console.log('Response status:', response.status);
                     
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('API Error:', errorText);
+                    if (response.ok) {
+                        const data = await response.json();
+                        devices = data.devices || [];
+                        console.log('Devices loaded from local file:', devices);
+                        return;
+                    } else {
                         throw new Error(`Failed to load devices: ${response.status} ${response.statusText}`);
                     }
-                    
-                    const data = await response.json();
-                    devices = data.devices || [];
-                    console.log('Devices loaded from API:', devices);
                 } catch (error) {
-                    console.error('Error loading devices from API:', error);
+                    console.error('Error loading devices from file:', error);
                     
-                    // Fallback 1: try to load from local file
-                    try {
-                        const response = await fetch('devices.json');
-                        if (response.ok) {
-                            const data = await response.json();
-                            devices = data.devices || [];
-                            console.log('Devices loaded from local file:', devices);
-                            return;
-                        }
-                    } catch (fallbackError) {
-                        console.error('Fallback loading from file failed:', fallbackError);
-                    }
-                    
-                    // Fallback 2: try to load from localStorage
+                    // Fallback: try to load from localStorage
                     try {
                         const stored = localStorage.getItem('iot-devices');
                         if (stored) {
@@ -330,37 +316,30 @@
                         lastUpdated: new Date().toISOString()
                     };
                     
-                    console.log('Saving devices to API:', data);
+                    console.log('Saving devices to local file:', data);
                     
-                    const response = await fetch('/api/devices', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
+                    // Save to localStorage as primary storage
+                    localStorage.setItem('iot-devices', JSON.stringify(data));
+                    console.log('Devices saved to localStorage');
                     
-                    console.log('Save response status:', response.status);
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Save API Error:', errorText);
-                        throw new Error(`Failed to save devices: ${response.status} ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    console.log('Devices saved successfully to API:', result);
-                } catch (error) {
-                    console.error('Error saving devices to API:', error);
-                    
-                    // Fallback: save to localStorage
+                    // Also try to save to JSON file (for backup/portability)
                     try {
-                        localStorage.setItem('iot-devices', JSON.stringify({
-                            devices: devices,
-                            lastUpdated: new Date().toISOString()
-                        }));
-                        console.log('Devices saved to localStorage as fallback');
-                    } catch (fallbackError) {
-                        console.error('Fallback save to localStorage failed:', fallbackError);
+                        const response = await fetch('devices.json', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        if (response.ok) {
+                            console.log('Devices also saved to JSON file');
+                        } else {
+                            console.log('Could not save to JSON file (this is normal for file:// URLs)');
+                        }
+                    } catch (fileError) {
+                        console.log('File save not available (this is normal for file:// URLs)');
                     }
+                } catch (error) {
+                    console.error('Error saving devices:', error);
                 }
             }
             let activeTab = 'dashboard';

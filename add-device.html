@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Device - IoT Device Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800/50 shadow-md border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-3">
+                        <a href="index.html" class="text-blue-500 hover:text-blue-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                        </a>
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-blue-500">
+                                <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+                            </svg>
+                            <h1 class="text-2xl font-bold">Add New Device</h1>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">User: 012-3456789</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-8">
+                <form id="add-device-form" class="space-y-8">
+                    <!-- Step 1: Device Selection and Setup -->
+                    <div class="step" id="step-1">
+                        <!-- Progress Indicator -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Add New Device</h2>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Step 1 of 3</span>
+                                    <div class="flex space-x-1">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Device Category and Type Selection -->
+                        <div class="space-y-6">
+                            <div>
+                                <label for="deviceCategory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Device Category</label>
+                                <select id="deviceCategory" name="deviceCategory" required 
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Select a device category</option>
+                                    <option value="lighting">🏠 Lighting (Bulbs, Switches, Dimmers)</option>
+                                    <option value="security">🔒 Security (Cameras, Locks, Sensors)</option>
+                                    <option value="climate">🌡️ Climate (Thermostats, AC, Fans)</option>
+                                    <option value="entertainment">📺 Entertainment (TVs, Speakers, Gaming)</option>
+                                    <option value="appliances">🏠 Appliances (Washers, Dryers, Fridges)</option>
+                                    <option value="other">🔧 Other (Custom Devices, Sensors)</option>
+                                </select>
+                            </div>
+
+                            <div id="deviceTypeContainer" class="hidden">
+                                <label for="deviceType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Device Type</label>
+                                <select id="deviceType" name="deviceType" required 
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Select a device type</option>
+                                </select>
+                            </div>
+
+                            <div id="deviceNameContainer" class="hidden">
+                                <label for="deviceName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Device Name</label>
+                                <input type="text" id="deviceName" name="deviceName" required 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                       placeholder="e.g., Living Room Light, Front Door Camera">
+                            </div>
+
+                            <div id="deviceLocationContainer" class="hidden">
+                                <label for="deviceLocation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location</label>
+                                <select id="deviceLocation" name="deviceLocation" required 
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Select a location</option>
+                                    <option value="Living Room">Living Room</option>
+                                    <option value="Kitchen">Kitchen</option>
+                                    <option value="Bedroom">Bedroom</option>
+                                    <option value="Bathroom">Bathroom</option>
+                                    <option value="Office">Office</option>
+                                    <option value="Garage">Garage</option>
+                                    <option value="Garden">Garden</option>
+                                    <option value="Hallway">Hallway</option>
+                                    <option value="Dining Room">Dining Room</option>
+                                    <option value="Basement">Basement</option>
+                                    <option value="Attic">Attic</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div id="custom-location" class="hidden">
+                                <label for="customLocationName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Location Name</label>
+                                <input type="text" id="customLocationName" name="customLocationName" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                       placeholder="Enter custom location name">
+                            </div>
+
+                            <div id="device-specific-settings" class="hidden">
+                                <!-- Device-specific settings will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Connection Setup -->
+                    <div class="step hidden" id="step-2">
+                        <!-- Progress Indicator -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Connect Your Device</h2>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Step 2 of 3</span>
+                                    <div class="flex space-x-1">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                                <div class="flex items-start space-x-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-blue-600 dark:text-blue-400 mt-1">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 16v-4"/>
+                                        <path d="M12 8h.01"/>
+                                    </svg>
+                                    <div>
+                                        <h3 class="font-semibold text-blue-900 dark:text-blue-100">Connection Instructions</h3>
+                                        <p class="text-blue-700 dark:text-blue-300 mt-1" id="connection-instructions">
+                                            Follow the manufacturer's instructions to put your device in pairing mode.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="wifiNetwork" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Wi-Fi Network</label>
+                                <select id="wifiNetwork" name="wifiNetwork" required 
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Select your Wi-Fi network</option>
+                                    <option value="HomeWiFi">HomeWiFi</option>
+                                    <option value="GuestWiFi">GuestWiFi</option>
+                                    <option value="OfficeWiFi">OfficeWiFi</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="wifiPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Wi-Fi Password</label>
+                                <input type="password" id="wifiPassword" name="wifiPassword" required 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                       placeholder="Enter your Wi-Fi password">
+                            </div>
+
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="saveWifi" name="saveWifi" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                                <label for="saveWifi" class="text-sm text-gray-700 dark:text-gray-300">Save Wi-Fi credentials for future devices</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Confirmation -->
+                    <div class="step hidden" id="step-3">
+                        <!-- Progress Indicator -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Review and Add Device</h2>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Step 3 of 3</span>
+                                    <div class="flex space-x-1">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6">
+                            <div id="device-summary" class="space-y-4">
+                                <!-- Device summary will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <button type="button" id="prev-btn" class="px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-2">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                            Previous
+                        </button>
+                        <button type="button" id="next-btn" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline ml-2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Device configuration data with improved organization
+        const deviceConfig = {
+            lighting: {
+                name: "Lighting",
+                icon: "lightbulb",
+                devices: [
+                    { id: "smart-bulb", name: "Smart Bulb", icon: "lightbulb", controls: ["brightness", "color", "power"], description: "Color-changing smart bulb" },
+                    { id: "smart-switch", name: "Smart Switch", icon: "toggle-left", controls: ["power"], description: "On/off switch for lights" },
+                    { id: "smart-dimmer", name: "Smart Dimmer", icon: "sliders", controls: ["brightness", "power"], description: "Dimmable light switch" },
+                    { id: "led-strip", name: "LED Strip", icon: "zap", controls: ["brightness", "color", "power"], description: "Flexible LED lighting" },
+                    { id: "smart-plug", name: "Smart Plug", icon: "power", controls: ["power"], description: "Control any plugged device" },
+                    { id: "ceiling-light", name: "Ceiling Light", icon: "lightbulb", controls: ["brightness", "power"], description: "Smart ceiling fixture" },
+                    { id: "table-lamp", name: "Table Lamp", icon: "lightbulb", controls: ["brightness", "power"], description: "Smart table lamp" }
+                ]
+            },
+            security: {
+                name: "Security",
+                icon: "shield",
+                devices: [
+                    { id: "security-camera", name: "Security Camera", icon: "camera", controls: ["power", "recording"], description: "Video surveillance camera" },
+                    { id: "smart-lock", name: "Smart Lock", icon: "lock", controls: ["lock", "power"], description: "Electronic door lock" },
+                    { id: "motion-sensor", name: "Motion Sensor", icon: "activity", controls: ["power", "sensitivity"], description: "Movement detection sensor" },
+                    { id: "door-sensor", name: "Door Sensor", icon: "door-open", controls: ["power"], description: "Door open/close sensor" },
+                    { id: "window-sensor", name: "Window Sensor", icon: "square", controls: ["power"], description: "Window open/close sensor" },
+                    { id: "doorbell-camera", name: "Doorbell Camera", icon: "camera", controls: ["power", "recording"], description: "Video doorbell" },
+                    { id: "alarm-system", name: "Alarm System", icon: "bell", controls: ["power", "arm"], description: "Home security alarm" }
+                ]
+            },
+            climate: {
+                name: "Climate",
+                icon: "thermometer",
+                devices: [
+                    { id: "smart-thermostat", name: "Smart Thermostat", icon: "thermometer", controls: ["temperature", "mode", "power"], description: "Temperature control system" },
+                    { id: "smart-ac", name: "Smart AC", icon: "snowflake", controls: ["temperature", "mode", "power"], description: "Air conditioning unit" },
+                    { id: "smart-fan", name: "Smart Fan", icon: "wind", controls: ["speed", "power"], description: "Ceiling or floor fan" },
+                    { id: "smart-heater", name: "Smart Heater", icon: "flame", controls: ["temperature", "power"], description: "Space heater" },
+                    { id: "humidity-sensor", name: "Humidity Sensor", icon: "droplets", controls: ["power"], description: "Humidity monitoring" },
+                    { id: "air-purifier", name: "Air Purifier", icon: "wind", controls: ["power", "mode"], description: "Air cleaning device" },
+                    { id: "dehumidifier", name: "Dehumidifier", icon: "droplets", controls: ["power", "humidity"], description: "Moisture removal" }
+                ]
+            },
+            entertainment: {
+                name: "Entertainment",
+                icon: "tv",
+                devices: [
+                    { id: "smart-tv", name: "Smart TV", icon: "tv", controls: ["power", "volume", "input"], description: "Television with smart features" },
+                    { id: "smart-speaker", name: "Smart Speaker", icon: "speaker", controls: ["power", "volume"], description: "Voice-controlled speaker" },
+                    { id: "streaming-device", name: "Streaming Device", icon: "play", controls: ["power"], description: "Media streaming box" },
+                    { id: "gaming-console", name: "Gaming Console", icon: "gamepad-2", controls: ["power"], description: "Video game system" },
+                    { id: "soundbar", name: "Soundbar", icon: "speaker", controls: ["power", "volume"], description: "Audio soundbar" },
+                    { id: "projector", name: "Projector", icon: "tv", controls: ["power", "brightness"], description: "Video projector" }
+                ]
+            },
+            appliances: {
+                name: "Appliances",
+                icon: "refrigerator",
+                devices: [
+                    { id: "smart-washer", name: "Smart Washer", icon: "washing-machine", controls: ["power", "cycle"], description: "Washing machine" },
+                    { id: "smart-dryer", name: "Smart Dryer", icon: "wind", controls: ["power", "cycle"], description: "Clothes dryer" },
+                    { id: "smart-fridge", name: "Smart Fridge", icon: "refrigerator", controls: ["power", "temperature"], description: "Refrigerator" },
+                    { id: "smart-dishwasher", name: "Smart Dishwasher", icon: "droplets", controls: ["power", "cycle"], description: "Dishwasher" },
+                    { id: "smart-oven", name: "Smart Oven", icon: "flame", controls: ["power", "temperature", "timer"], description: "Oven or microwave" },
+                    { id: "coffee-maker", name: "Coffee Maker", icon: "coffee", controls: ["power", "timer"], description: "Smart coffee machine" },
+                    { id: "blender", name: "Blender", icon: "zap", controls: ["power", "speed"], description: "Smart blender" }
+                ]
+            },
+            other: {
+                name: "Other",
+                icon: "help-circle",
+                devices: [
+                    { id: "custom-device", name: "Custom Device", icon: "settings", controls: ["power"], description: "Custom IoT device" },
+                    { id: "sensor", name: "Sensor", icon: "activity", controls: ["power"], description: "General sensor" },
+                    { id: "actuator", name: "Actuator", icon: "zap", controls: ["power"], description: "General actuator" },
+                    { id: "robot-vacuum", name: "Robot Vacuum", icon: "zap", controls: ["power", "mode"], description: "Automatic vacuum cleaner" },
+                    { id: "smart-blinds", name: "Smart Blinds", icon: "square", controls: ["power", "position"], description: "Automated window blinds" }
+                ]
+            }
+        };
+
+        let currentStep = 1;
+        let selectedCategory = null;
+        let selectedDevice = null;
+        let deviceData = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeForm();
+            setupEventListeners();
+        });
+
+        function initializeForm() {
+            // Initialize device category selection
+            document.getElementById('deviceCategory').addEventListener('change', (e) => {
+                selectedCategory = e.target.value;
+                if (selectedCategory) {
+                    populateDeviceTypes(selectedCategory);
+                    document.getElementById('deviceTypeContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('deviceTypeContainer').classList.add('hidden');
+                    document.getElementById('deviceNameContainer').classList.add('hidden');
+                    document.getElementById('deviceLocationContainer').classList.add('hidden');
+                    document.getElementById('device-specific-settings').classList.add('hidden');
+                }
+            });
+
+            // Initialize device type selection
+            document.getElementById('deviceType').addEventListener('change', (e) => {
+                selectedDevice = deviceConfig[selectedCategory]?.devices.find(d => d.id === e.target.value);
+                if (selectedDevice) {
+                    document.getElementById('deviceNameContainer').classList.remove('hidden');
+                    document.getElementById('deviceLocationContainer').classList.remove('hidden');
+                    showDeviceSpecificSettings(selectedDevice);
+                } else {
+                    document.getElementById('deviceNameContainer').classList.add('hidden');
+                    document.getElementById('deviceLocationContainer').classList.add('hidden');
+                    document.getElementById('device-specific-settings').classList.add('hidden');
+                }
+            });
+
+            // Initialize location selection
+            document.getElementById('deviceLocation').addEventListener('change', (e) => {
+                const customLocation = document.getElementById('custom-location');
+                if (e.target.value === 'Other') {
+                    customLocation.classList.remove('hidden');
+                } else {
+                    customLocation.classList.add('hidden');
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('next-btn').addEventListener('click', nextStep);
+            document.getElementById('prev-btn').addEventListener('click', prevStep);
+            document.getElementById('add-device-form').addEventListener('submit', handleSubmit);
+        }
+
+        function nextStep() {
+            if (currentStep === 1) {
+                if (!validateStep1()) {
+                    return;
+                }
+                showConnectionSetup();
+            } else if (currentStep === 2) {
+                if (!validateConnectionSetup()) {
+                    return;
+                }
+                showConfirmation();
+            } else if (currentStep === 3) {
+                addDevice();
+            }
+
+            if (currentStep < 3) {
+                currentStep++;
+                updateStepDisplay();
+            }
+        }
+
+        function validateStep1() {
+            if (!selectedCategory) {
+                alert('Please select a device category');
+                return false;
+            }
+            if (!selectedDevice) {
+                alert('Please select a device type');
+                return false;
+            }
+            if (!document.getElementById('deviceName').value.trim()) {
+                alert('Please enter a device name');
+                return false;
+            }
+            if (!document.getElementById('deviceLocation').value) {
+                alert('Please select a location');
+                return false;
+            }
+            if (document.getElementById('deviceLocation').value === 'Other' && 
+                !document.getElementById('customLocationName').value.trim()) {
+                alert('Please enter a custom location name');
+                return false;
+            }
+            return true;
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+
+        function updateStepDisplay() {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+            
+            // Show current step
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            if (currentStep === 1) {
+                prevBtn.classList.add('hidden');
+                nextBtn.textContent = 'Next';
+            } else if (currentStep === 3) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.textContent = 'Add Device';
+            } else {
+                prevBtn.classList.remove('hidden');
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function populateDeviceTypes(category) {
+            const deviceTypeSelect = document.getElementById('deviceType');
+            const categoryDevices = deviceConfig[category]?.devices || [];
+            
+            // Clear existing options
+            deviceTypeSelect.innerHTML = '<option value="">Select a device type</option>';
+            
+            // Add new options
+            categoryDevices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.id;
+                option.textContent = `${device.name} - ${device.description}`;
+                deviceTypeSelect.appendChild(option);
+            });
+        }
+
+        function showDeviceSpecificSettings(device) {
+            const container = document.getElementById('device-specific-settings');
+            container.innerHTML = getDeviceSpecificSettings(device);
+            container.classList.remove('hidden');
+        }
+
+
+
+        function getDeviceSpecificSettings(device) {
+            const settings = {
+                'smart-bulb': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" 
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>50%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Color</label>
+                            <input type="color" value="#ffffff" name="defaultColor" 
+                                   class="w-full h-12 rounded-lg border border-gray-300 dark:border-gray-600 cursor-pointer">
+                        </div>
+                    </div>
+                `,
+                'smart-thermostat': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Temperature</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="number" min="10" max="35" value="22" name="defaultTemperature" 
+                                       class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <span class="text-gray-500">°C</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Mode</label>
+                            <select name="defaultMode" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="auto">Auto</option>
+                                <option value="heat">Heat</option>
+                                <option value="cool">Cool</option>
+                                <option value="fan">Fan Only</option>
+                            </select>
+                        </div>
+                    </div>
+                `,
+                'security-camera': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recording Quality</label>
+                            <select name="recordingQuality" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="720p">720p</option>
+                                <option value="1080p" selected>1080p</option>
+                                <option value="4k">4K</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Motion Detection</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" name="motionDetection" checked class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Enable motion detection alerts</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+            
+            return settings[device.id] || `
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    No additional setup required for this device type.
+                </div>
+            `;
+        }
+
+        function showConnectionSetup() {
+            const instructions = {
+                'smart-bulb': 'Turn off the bulb, then turn it on and off 3 times quickly to enter pairing mode.',
+                'smart-switch': 'Press and hold the reset button for 5 seconds until the LED starts blinking.',
+                'smart-thermostat': 'Go to Settings > Wi-Fi Setup and follow the on-screen instructions.',
+                'security-camera': 'Press the reset button on the camera for 10 seconds, then release.',
+                'smart-lock': 'Enter the lock\'s programming mode by entering the master code followed by 0.',
+                'smart-tv': 'Go to Settings > Network > Wi-Fi and select your network.',
+                'smart-speaker': 'Press and hold the mute button for 5 seconds until you hear a sound.',
+                'smart-fan': 'Press the reset button on the remote or base unit for 3 seconds.',
+                'smart-plug': 'Press and hold the power button for 5 seconds until the LED flashes rapidly.',
+                'default': 'Follow the manufacturer\'s instructions to put your device in pairing mode.'
+            };
+            
+            document.getElementById('connection-instructions').textContent = 
+                instructions[selectedDevice.id] || instructions.default;
+        }
+
+        function showConfirmation() {
+            const formData = new FormData(document.getElementById('add-device-form'));
+            const summary = document.getElementById('device-summary');
+            
+            const location = formData.get('deviceLocation') === 'Other' 
+                ? formData.get('customLocationName') 
+                : formData.get('deviceLocation');
+            
+            summary.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 dark:text-white">Device Information</h4>
+                        <div class="mt-2 space-y-2 text-sm">
+                            <div><span class="font-medium">Name:</span> ${formData.get('deviceName')}</div>
+                            <div><span class="font-medium">Type:</span> ${selectedDevice.name}</div>
+                            <div><span class="font-medium">Category:</span> ${deviceConfig[selectedCategory].name}</div>
+                            <div><span class="font-medium">Location:</span> ${location}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 dark:text-white">Connection Details</h4>
+                        <div class="mt-2 space-y-2 text-sm">
+                            <div><span class="font-medium">Network:</span> ${formData.get('wifiNetwork')}</div>
+                            <div><span class="font-medium">Save Credentials:</span> ${formData.get('saveWifi') ? 'Yes' : 'No'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+
+        function validateConnectionSetup() {
+            const network = document.getElementById('wifiNetwork').value;
+            const password = document.getElementById('wifiPassword').value;
+            
+            if (!network) {
+                alert('Please select a Wi-Fi network');
+                return false;
+            }
+            
+            if (!password) {
+                alert('Please enter your Wi-Fi password');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function addDevice() {
+            const formData = new FormData(document.getElementById('add-device-form'));
+            
+            const device = {
+                id: Date.now(),
+                name: formData.get('deviceName'),
+                type: selectedDevice.name,
+                category: selectedCategory,
+                icon: selectedDevice.icon,
+                location: formData.get('deviceLocation') === 'Other' 
+                    ? formData.get('customLocationName') 
+                    : formData.get('deviceLocation'),
+                status: 'active',
+                settings: getDeviceSettings(formData),
+                usage: 0,
+                plan: 'Basic IoT',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save device to local storage
+            saveDeviceToStorage(device);
+            
+            // Redirect to main page
+            window.location.href = 'index.html';
+        }
+
+        function getDeviceSettings(formData) {
+            const settings = {};
+            
+            // Common settings
+            if (formData.get('defaultBrightness')) {
+                settings.brightness = parseInt(formData.get('defaultBrightness'));
+            }
+            if (formData.get('defaultColor')) {
+                settings.color = formData.get('defaultColor');
+            }
+            if (formData.get('defaultTemperature')) {
+                settings.temp = parseInt(formData.get('defaultTemperature'));
+            }
+            if (formData.get('defaultMode')) {
+                settings.mode = formData.get('defaultMode');
+            }
+            if (formData.get('recordingQuality')) {
+                settings.quality = formData.get('recordingQuality');
+            }
+            if (formData.get('motionDetection')) {
+                settings.motionDetection = true;
+            }
+            
+            // Device-specific defaults
+            switch (selectedDevice.id) {
+                case 'smart-lock':
+                    settings.locked = true;
+                    break;
+                case 'smart-switch':
+                case 'smart-plug':
+                    settings.power = false;
+                    break;
+                case 'smart-bulb':
+                case 'led-strip':
+                    settings.brightness = settings.brightness || 50;
+                    settings.color = settings.color || '#ffffff';
+                    break;
+            }
+            
+            return settings;
+        }
+
+        function saveDeviceToStorage(device) {
+            try {
+                // Try to load existing devices
+                let devices = [];
+                const existing = localStorage.getItem('iot-devices');
+                if (existing) {
+                    const data = JSON.parse(existing);
+                    devices = data.devices || [];
+                }
+                
+                // Add new device
+                devices.push(device);
+                
+                // Save back to storage
+                localStorage.setItem('iot-devices', JSON.stringify({
+                    devices: devices,
+                    lastUpdated: new Date().toISOString()
+                }));
+                
+                console.log('Device saved successfully:', device);
+            } catch (error) {
+                console.error('Error saving device:', error);
+                alert('Error saving device. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 
