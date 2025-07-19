@@ -224,7 +224,12 @@
                             <h3 class="font-bold text-lg text-gray-800 dark:text-white">Active Devices</h3>
                             <p class="text-4xl font-bold text-green-500">${devices.filter(d => d.status === 'active').length}</p>
                         `)}
-                        ${createCard(`<h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3><canvas id="usage-chart"></canvas>`)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3>
+                            <div class="relative h-48">
+                                <canvas id="usage-chart"></canvas>
+                            </div>
+                        `)}
                         ${createCard(`
                             <h3 class="font-bold text-lg mb-2">Your Progress</h3>
                             <div class="text-center mb-4">
