@@ -1,370 +1,475 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Home, Zap, Wifi, Shield, Settings, PlusCircle, Power, Sun, Moon, Wind, Droplet, Bell, Cloud, Lock, Package, Star } from 'lucide-react';
-
-// Mock Data
-const initialDevices = [
-  { id: 1, name: 'Living Room AC', type: 'Smart AC', status: 'active', icon: <Wind />, settings: { temp: 22, mode: 'cool' }, usage: 7.2, plan: 'Premium IoT' },
-  { id: 2, name: 'Main Door Lock', type: 'Smart Lock', status: 'active', icon: <Lock />, settings: { locked: true }, usage: 0.5, plan: 'Home Security' },
-  { id: 3, name: 'Garden Sprinkler', type: 'Smart Sprinkler', status: 'inactive', icon: <Droplet />, settings: { enabled: false, schedule: '6 AM' }, usage: 2.1, plan: 'Basic IoT' },
-  { id: 4, name: 'Solar Panel', type: 'Energy Monitor', status: 'active', icon: <Sun />, settings: { output: 1.2 }, usage: 0.1, plan: 'Premium IoT' },
-  { id: 5, name: 'Security Cam', type: 'Camera', status: 'active', icon: <Shield />, settings: { streaming: true }, usage: 15.8, plan: 'Home Security' },
-];
-
-const usageData = [
-  { name: 'Jan', usage: 65 }, { name: 'Feb', usage: 59 }, { name: 'Mar', usage: 80 },
-  { name: 'Apr', usage: 81 }, { name: 'May', usage: 56 }, { name: 'Jun', usage: 55 },
-  { name: 'Jul', usage: 40 },
-];
-
-const gamification = {
-  points: 1250,
-  level: 'Eco-Warrior',
-  badges: ['Energy Saver', 'Early Adopter', 'Automation Pro'],
-};
-
-const plans = [
-    { id: 'basic', name: 'Basic IoT', price: 5, features: ['Up to 3 devices', 'Basic controls', 'Standard alerts'], icon: <Package size={32} /> },
-    { id: 'premium', name: 'Premium IoT', price: 15, features: ['Up to 10 devices', 'Advanced automation', 'Cloud storage (10GB)', 'AI insights'], icon: <Star size={32} /> },
-    { id: 'security', name: 'Home Security', price: 20, features: ['Unlimited security devices', '24/7 monitoring', 'Cloud storage (30GB)', 'Emergency dispatch'], icon: <Shield size={32} /> },
-];
-
-// Helper Components
-const Card = ({ children, className = '' }) => (
-  <div className={`bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ${className}`}>
-    {children}
-  </div>
-);
-
-const IconButton = ({ icon, onClick, className = '' }) => (
-    <button onClick={onClick} className={`p-3 rounded-full transition-all duration-300 ${className}`}>
-        {icon}
-    </button>
-);
-
-// Main Components
-const Header = () => (
-  <header className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-    <div className="flex items-center space-x-2">
-      <Zap className="text-blue-500" size={28} />
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white">IoT Device Hub</h1>
-    </div>
-    <div className="flex items-center space-x-4">
-      <span className="text-sm font-medium text-gray-600 dark:text-gray-300">User: 012-3456789</span>
-      <Bell className="text-gray-500 dark:text-gray-400 cursor-pointer" />
-      <Settings className="text-gray-500 dark:text-gray-400 cursor-pointer" />
-    </div>
-  </header>
-);
-
-const GamificationWidget = () => (
-    <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-        <h3 className="font-bold text-lg mb-2">Your Progress</h3>
-        <div className="text-center mb-4">
-            <p className="text-4xl font-bold">{gamification.points}</p>
-            <p className="text-purple-200">{gamification.level}</p>
-        </div>
-        <div className="flex justify-center space-x-2">
-            {gamification.badges.map(badge => (
-                <span key={badge} className="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">{badge}</span>
-            ))}
-        </div>
-    </Card>
-);
-
-const UsageAnalytics = () => (
-  <Card>
-    <h3 className="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3>
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={usageData}>
-        <XAxis dataKey="name" stroke="#9ca3af" />
-        <YAxis stroke="#9ca3af" />
-        <Tooltip contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', border: 'none', borderRadius: '0.5rem' }} />
-        <Legend />
-        <Bar dataKey="usage" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
-  </Card>
-);
-
-const DeviceControl = ({ device, onToggle, onSettingChange }) => {
-    const [localSettings, setLocalSettings] = useState(device.settings);
-
-    const handleToggle = () => {
-        onToggle(device.id, device.status === 'active' ? 'inactive' : 'active');
-    };
-
-    const handleSetting = (key, value) => {
-        const newSettings = { ...localSettings, [key]: value };
-        setLocalSettings(newSettings);
-        onSettingChange(device.id, newSettings);
-    };
-
-    const renderControls = () => {
-        switch (device.type) {
-            case 'Smart AC':
-                return (
-                    <div className="flex items-center justify-between">
-                        <span className="font-bold text-2xl text-gray-700 dark:text-gray-200">{localSettings.temp}°C</span>
-                        <div>
-                            <button onClick={() => handleSetting('temp', localSettings.temp + 1)} className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-l-md">+</button>
-                            <button onClick={() => handleSetting('temp', localSettings.temp - 1)} className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-r-md">-</button>
-                        </div>
-                    </div>
-                );
-            case 'Smart Lock':
-                return (
-                    <button onClick={() => handleSetting('locked', !localSettings.locked)} className={`w-full py-2 rounded-lg text-white font-semibold ${localSettings.locked ? 'bg-red-500' : 'bg-green-500'}`}>
-                        {localSettings.locked ? 'Locked' : 'Unlocked'}
-                    </button>
-                );
-            default:
-                return <p className="text-sm text-gray-500 dark:text-gray-400">No specific controls</p>;
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Device Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-    };
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
 
-    return (
-        <Card className={`flex flex-col justify-between ${device.status !== 'active' ? 'opacity-50' : ''}`}>
-            <div>
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-3">
-                        <div className={`p-3 rounded-full bg-${device.status === 'active' ? 'blue' : 'gray'}-100 dark:bg-${device.status === 'active' ? 'blue' : 'gray'}-800`}>
-                            {React.cloneElement(device.icon, { className: `text-${device.status === 'active' ? 'blue' : 'gray'}-500 dark:text-${device.status === 'active' ? 'blue' : 'gray'}-300` })}
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-gray-800 dark:text-white">{device.name}</h4>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{device.type}</p>
-                        </div>
-                    </div>
-                    <IconButton 
-                        icon={<Power size={20} />} 
-                        onClick={handleToggle}
-                        className={device.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}
-                    />
-                </div>
-                <div className="mt-4 space-y-2">
-                    {renderControls()}
-                </div>
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <nav class="w-24 bg-white dark:bg-gray-800/50 p-2 space-y-4 flex flex-col items-center shadow-md">
+            <div class="p-2">
+                <div data-lucide="zap" class="text-blue-500" style="width: 32px; height: 32px;"></div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
-                <span className="text-gray-500 dark:text-gray-400">Usage: {device.usage} GB</span>
-                <span className="font-semibold text-blue-500">{device.plan}</span>
+            <button data-tab="dashboard" class="nav-item flex flex-col items-center justify-center space-y-1 w-full py-3 rounded-lg transition-colors bg-blue-600 text-white">
+                <div data-lucide="home" style="width: 24px; height: 24px;"></div>
+                <span class="text-xs font-medium">Dashboard</span>
+            </button>
+            <button data-tab="billing" class="nav-item flex flex-col items-center justify-center space-y-1 w-full py-3 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <div data-lucide="package" style="width: 24px; height: 24px;"></div>
+                <span class="text-xs font-medium">Plans</span>
+            </button>
+            <div class="flex-grow"></div>
+            <button id="theme-toggle" class="p-3 rounded-full transition-all duration-300 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <div data-lucide="sun" id="theme-icon-sun" class="hidden"></div>
+                <div data-lucide="moon" id="theme-icon-moon"></div>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 h-screen overflow-y-auto">
+            <!-- Header -->
+            <header class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm z-10">
+                <div class="flex items-center space-x-2">
+                    <div data-lucide="zap" class="text-blue-500" style="width: 28px; height: 28px;"></div>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">IoT Device Hub</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">User: 012-3456789</span>
+                    <div data-lucide="bell" class="text-gray-500 dark:text-gray-400 cursor-pointer"></div>
+                    <div data-lucide="settings" class="text-gray-500 dark:text-gray-400 cursor-pointer"></div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content-area" class="p-6">
+                <!-- Content will be injected here by JavaScript -->
             </div>
-        </Card>
-    );
-};
-
-const AddDeviceFlow = ({ onAddDevice, onCancel }) => {
-    const [step, setStep] = useState(1);
-    const [sim, setSim] = useState('');
-    const [discoveredDevice, setDiscoveredDevice] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleDiscover = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            // Mock discovery
-            setDiscoveredDevice({ name: 'Smart Meter', type: 'Energy Monitor', icon: <Zap /> });
-            setIsLoading(false);
-            setStep(2);
-        }, 1500);
-    };
-
-    const handleActivate = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            onAddDevice({ ...discoveredDevice, id: Date.now(), status: 'active', usage: 0, plan: 'Basic IoT', settings: {} });
-            setIsLoading(false);
-        }, 2000);
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
-            <Card className="w-full max-w-md">
-                <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">Add New Device</h2>
-                {step === 1 && (
-                    <>
-                        <p className="text-center text-gray-600 dark:text-gray-300 mb-4">Enter the SIM number of your IoT device for one-click activation.</p>
-                        <input
-                            type="text"
-                            value={sim}
-                            onChange={(e) => setSim(e.target.value)}
-                            placeholder="e.g., 89xxxxxxxxxxxxxx"
-                            className="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-center mb-4"
-                        />
-                        <button onClick={handleDiscover} disabled={!sim || isLoading} className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400">
-                            {isLoading ? 'Discovering...' : 'Discover Device'}
-                        </button>
-                    </>
-                )}
-                {step === 2 && discoveredDevice && (
-                    <div className="text-center">
-                        <div className="flex justify-center mb-4">
-                            <div className="p-4 bg-blue-100 dark:bg-blue-800 rounded-full">
-                                {React.cloneElement(discoveredDevice.icon, { size: 48, className: "text-blue-500" })}
-                            </div>
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{discoveredDevice.name}</h3>
-                        <p className="text-gray-500 dark:text-gray-400 mb-6">{discoveredDevice.type}</p>
-                        <button onClick={handleActivate} disabled={isLoading} className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400">
-                            {isLoading ? 'Activating...' : 'Activate & Add'}
-                        </button>
-                    </div>
-                )}
-                <button onClick={onCancel} className="w-full mt-4 py-2 text-gray-600 dark:text-gray-300">Cancel</button>
-            </Card>
-        </div>
-    );
-};
-
-const PlansAndBilling = () => (
-    <div className="p-6">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Plans & Subscriptions</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-            {plans.map(plan => (
-                <Card key={plan.id} className="flex flex-col">
-                    <div className="flex-grow">
-                        <div className="flex items-center space-x-4 mb-4">
-                            <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-500">
-                                {plan.icon}
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white">{plan.name}</h3>
-                        </div>
-                        <p className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">${plan.price}<span className="text-base font-normal text-gray-500 dark:text-gray-400">/mo</span></p>
-                        <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-                            {plan.features.map(feature => (
-                                <li key={feature} className="flex items-center">
-                                    <PlusCircle className="text-green-500 mr-2" size={16} />
-                                    {feature}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <button className="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                        {plan.id === 'premium' ? 'Current Plan' : 'Upgrade'}
-                    </button>
-                </Card>
-            ))}
-        </div>
-
-        <div className="mt-12">
-            <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Value-Added Services</h3>
-             <div className="grid md:grid-cols-2 gap-6">
-                <Card className="flex items-center justify-between">
-                    <div>
-                        <h4 className="font-bold text-lg text-gray-800 dark:text-white">Cloud Backup+</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Unlimited cloud storage for all cameras.</p>
-                    </div>
-                     <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$5/mo</button>
-                </Card>
-                 <Card className="flex items-center justify-between">
-                    <div>
-                        <h4 className="font-bold text-lg text-gray-800 dark:text-white">Automation Scripts</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Access community-driven automation recipes.</p>
-                    </div>
-                     <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$2.99/mo</button>
-                </Card>
-             </div>
-        </div>
+        </main>
     </div>
-);
 
-
-const Dashboard = ({ devices, onToggle, onSettingChange, onAddDeviceClick }) => (
-    <div className="p-6 space-y-6">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-                <h3 className="font-bold text-lg text-gray-800 dark:text-white">Total Devices</h3>
-                <p className="text-4xl font-bold text-blue-500">{devices.length}</p>
-            </Card>
-            <Card>
-                <h3 className="font-bold text-lg text-gray-800 dark:text-white">Active Devices</h3>
-                <p className="text-4xl font-bold text-green-500">{devices.filter(d => d.status === 'active').length}</p>
-            </Card>
-            <UsageAnalytics />
-            <GamificationWidget />
-        </div>
-        <div>
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
-                <button onClick={onAddDeviceClick} className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                    <PlusCircle size={20} />
-                    <span>Add Device</span>
+    <!-- Add Device Modal -->
+    <div id="add-device-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">Add New Device</h2>
+            <!-- Step 1: Discover -->
+            <div id="modal-step-1">
+                <p class="text-center text-gray-600 dark:text-gray-300 mb-4">Enter the SIM number of your IoT device for one-click activation.</p>
+                <input id="sim-input" type="text" placeholder="e.g., 89xxxxxxxxxxxxxx" class="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-center mb-4">
+                <button id="discover-btn" class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400">
+                    Discover Device
                 </button>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {devices.map(device => (
-                    <DeviceControl key={device.id} device={device} onToggle={onToggle} onSettingChange={onSettingChange} />
-                ))}
+            <!-- Step 2: Activate -->
+            <div id="modal-step-2" class="hidden text-center">
+                 <div class="flex justify-center mb-4">
+                    <div id="discovered-device-icon" class="p-4 bg-blue-100 dark:bg-blue-800 rounded-full">
+                        <!-- Icon will be injected here -->
+                    </div>
+                </div>
+                <h3 id="discovered-device-name" class="text-xl font-semibold text-gray-800 dark:text-white"></h3>
+                <p id="discovered-device-type" class="text-gray-500 dark:text-gray-400 mb-6"></p>
+                <button id="activate-btn" class="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400">
+                    Activate & Add
+                </button>
             </div>
+            <button id="cancel-modal-btn" class="w-full mt-4 py-2 text-gray-600 dark:text-gray-300">Cancel</button>
         </div>
     </div>
-);
 
-export default function App() {
-  const [devices, setDevices] = useState(initialDevices);
-  const [isAddingDevice, setIsAddingDevice] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [isDarkMode, setIsDarkMode] = useState(true);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
-  }, [isDarkMode]);
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const initialDevices = [
+                { id: 1, name: 'Living Room AC', type: 'Smart AC', status: 'active', icon: 'wind', settings: { temp: 22, mode: 'cool' }, usage: 7.2, plan: 'Premium IoT' },
+                { id: 2, name: 'Main Door Lock', type: 'Smart Lock', status: 'active', icon: 'lock', settings: { locked: true }, usage: 0.5, plan: 'Home Security' },
+                { id: 3, name: 'Garden Sprinkler', type: 'Smart Sprinkler', status: 'inactive', icon: 'droplet', settings: { enabled: false, schedule: '6 AM' }, usage: 2.1, plan: 'Basic IoT' },
+                { id: 4, name: 'Solar Panel', type: 'Energy Monitor', status: 'active', icon: 'sun', settings: { output: 1.2 }, usage: 0.1, plan: 'Premium IoT' },
+                { id: 5, name: 'Security Cam', type: 'Camera', status: 'active', icon: 'shield', settings: { streaming: true }, usage: 15.8, plan: 'Home Security' },
+            ];
 
-  const handleToggleDevice = useCallback((id, newStatus) => {
-    setDevices(prev => prev.map(d => d.id === id ? { ...d, status: newStatus } : d));
-  }, []);
+            const usageData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Usage (GB)',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                }]
+            };
 
-  const handleSettingChange = useCallback((id, newSettings) => {
-    setDevices(prev => prev.map(d => d.id === id ? { ...d, settings: newSettings } : d));
-  }, []);
+            const gamification = {
+                points: 1250,
+                level: 'Eco-Warrior',
+                badges: ['Energy Saver', 'Early Adopter', 'Automation Pro'],
+            };
+            
+            const plans = [
+                { id: 'basic', name: 'Basic IoT', price: 5, icon: 'package', features: ['Up to 3 devices', 'Basic controls', 'Standard alerts']},
+                { id: 'premium', name: 'Premium IoT', price: 15, icon: 'star', features: ['Up to 10 devices', 'Advanced automation', 'Cloud storage (10GB)', 'AI insights']},
+                { id: 'security', name: 'Home Security', price: 20, icon: 'shield', features: ['Unlimited security devices', '24/7 monitoring', 'Cloud storage (30GB)', 'Emergency dispatch']},
+            ];
 
-  const handleAddDevice = (newDevice) => {
-    setDevices(prev => [...prev, newDevice]);
-    setIsAddingDevice(false);
-  };
+            let devices = [...initialDevices];
+            let activeTab = 'dashboard';
+            let usageChart = null;
 
-  const renderContent = () => {
-      switch(activeTab) {
-          case 'dashboard':
-              return <Dashboard devices={devices} onToggle={handleToggleDevice} onSettingChange={handleSettingChange} onAddDeviceClick={() => setIsAddingDevice(true)} />;
-          case 'billing':
-              return <PlansAndBilling />;
-          default:
-              return <Dashboard devices={devices} onToggle={handleToggleDevice} onSettingChange={handleSettingChange} onAddDeviceClick={() => setIsAddingDevice(true)} />;
-      }
-  }
+            // --- DOM ELEMENTS ---
+            const contentArea = document.getElementById('content-area');
+            const navItems = document.querySelectorAll('.nav-item');
+            const modal = document.getElementById('add-device-modal');
+            const cancelModalBtn = document.getElementById('cancel-modal-btn');
+            const discoverBtn = document.getElementById('discover-btn');
+            const activateBtn = document.getElementById('activate-btn');
+            const simInput = document.getElementById('sim-input');
+            const modalStep1 = document.getElementById('modal-step-1');
+            const modalStep2 = document.getElementById('modal-step-2');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconSun = document.getElementById('theme-icon-sun');
+            const themeIconMoon = document.getElementById('theme-icon-moon');
 
-  const NavItem = ({ tabName, icon, label }) => (
-    <button onClick={() => setActiveTab(tabName)} className={`flex flex-col items-center justify-center space-y-1 w-full py-3 rounded-lg transition-colors ${activeTab === tabName ? 'bg-blue-600 text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>
-        {icon}
-        <span className="text-xs font-medium">{label}</span>
-    </button>
-  );
+            // --- TEMPLATES ---
+            const createCard = (content, extraClasses = '') => `<div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ${extraClasses}">${content}</div>`;
+            
+            const createIcon = (name, classes = '', size = 24) => `<div data-lucide="${name}" class="${classes}" style="width:${size}px; height:${size}px;"></div>`;
 
-  return (
-    <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300`}>
-      <div className="flex">
-        <nav className="w-24 bg-white dark:bg-gray-800/50 p-2 space-y-4 flex flex-col items-center shadow-md">
-            <div className="p-2">
-                <Zap className="text-blue-500" size={32} />
-            </div>
-            <NavItem tabName="dashboard" icon={<Home size={24} />} label="Dashboard" />
-            <NavItem tabName="billing" icon={<Package size={24} />} label="Plans" />
-            <div className="flex-grow"></div>
-            <IconButton 
-                icon={isDarkMode ? <Sun /> : <Moon />}
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
-            />
-        </nav>
-        <main className="flex-1 h-screen overflow-y-auto">
-            <Header />
-            {renderContent()}
-        </main>
-      </div>
-      
-      {isAddingDevice && <AddDeviceFlow onAddDevice={handleAddDevice} onCancel={() => setIsAddingDevice(false)} />}
-    </div>
-  );
-}
+            const getDeviceControlsHTML = (device) => {
+                switch (device.type) {
+                    case 'Smart AC':
+                        return `
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-2xl text-gray-700 dark:text-gray-200">${device.settings.temp}°C</span>
+                                <div>
+                                    <button data-action="temp-up" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-l-md">+</button>
+                                    <button data-action="temp-down" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-r-md">-</button>
+                                </div>
+                            </div>`;
+                    case 'Smart Lock':
+                        return `<button data-action="toggle-lock" class="w-full py-2 rounded-lg text-white font-semibold ${device.settings.locked ? 'bg-red-500' : 'bg-green-500'}">${device.settings.locked ? 'Locked' : 'Unlocked'}</button>`;
+                    default:
+                        return `<p class="text-sm text-gray-500 dark:text-gray-400">No specific controls</p>`;
+                }
+            };
+
+            const getDeviceCardHTML = (device) => {
+                const statusColor = device.status === 'active' ? 'blue' : 'gray';
+                const powerButtonColor = device.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500';
+                return createCard(`
+                    <div class="flex flex-col justify-between h-full ${device.status !== 'active' ? 'opacity-50' : ''}" data-device-id="${device.id}">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-3 rounded-full bg-${statusColor}-100 dark:bg-${statusColor}-800">
+                                        ${createIcon(device.icon, `text-${statusColor}-500 dark:text-${statusColor}-300`)}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">${device.name}</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">${device.type}</p>
+                                    </div>
+                                </div>
+                                <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 ${powerButtonColor}">
+                                    ${createIcon('power', '', 20)}
+                                </button>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                ${getDeviceControlsHTML(device)}
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Usage: ${device.usage} GB</span>
+                            <span class="font-semibold text-blue-500">${device.plan}</span>
+                        </div>
+                    </div>
+                `, 'flex flex-col');
+            };
+            
+            const getDashboardHTML = () => `
+                <div class="space-y-6">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        ${createCard(`
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Total Devices</h3>
+                            <p class="text-4xl font-bold text-blue-500">${devices.length}</p>
+                        `)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Active Devices</h3>
+                            <p class="text-4xl font-bold text-green-500">${devices.filter(d => d.status === 'active').length}</p>
+                        `)}
+                        ${createCard(`<h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3><canvas id="usage-chart"></canvas>`)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg mb-2">Your Progress</h3>
+                            <div class="text-center mb-4">
+                                <p class="text-4xl font-bold">${gamification.points}</p>
+                                <p class="text-purple-200">${gamification.level}</p>
+                            </div>
+                            <div class="flex justify-center space-x-2">
+                                ${gamification.badges.map(badge => `<span class="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">${badge}</span>`).join('')}
+                            </div>
+                        `, 'bg-gradient-to-br from-blue-500 to-purple-600 text-white')}
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
+                            <button id="add-device-btn" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                ${createIcon('plus-circle', '', 20)}
+                                <span>Add Device</span>
+                            </button>
+                        </div>
+                        <div id="device-list" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            ${devices.map(getDeviceCardHTML).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const getBillingHTML = () => `
+                <div>
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Plans & Subscriptions</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        ${plans.map(plan => createCard(`
+                            <div class="flex flex-col h-full">
+                                <div class="flex-grow">
+                                    <div class="flex items-center space-x-4 mb-4">
+                                        <div class="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-500">${createIcon(plan.icon, '', 32)}</div>
+                                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">${plan.name}</h3>
+                                    </div>
+                                    <p class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">$${plan.price}<span class="text-base font-normal text-gray-500 dark:text-gray-400">/mo</span></p>
+                                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                                        ${plan.features.map(f => `<li class="flex items-center">${createIcon('plus-circle', 'text-green-500 mr-2', 16)} ${f}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <button class="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">${plan.id === 'premium' ? 'Current Plan' : 'Upgrade'}</button>
+                            </div>
+                        `, 'flex flex-col')).join('')}
+                    </div>
+                    <div class="mt-12">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Value-Added Services</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            ${createCard(`
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800 dark:text-white">Cloud Backup+</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Unlimited cloud storage for all cameras.</p>
+                                    </div>
+                                    <button class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$5/mo</button>
+                                </div>
+                            `)}
+                            ${createCard(`
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800 dark:text-white">Automation Scripts</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Access community-driven automation recipes.</p>
+                                    </div>
+                                    <button class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$2.99/mo</button>
+                                </div>
+                            `)}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+
+            // --- RENDER FUNCTIONS ---
+            const render = () => {
+                if (activeTab === 'dashboard') {
+                    contentArea.innerHTML = getDashboardHTML();
+                    renderChart();
+                    document.getElementById('add-device-btn').addEventListener('click', openModal);
+                    document.getElementById('device-list').addEventListener('click', handleDeviceInteraction);
+                } else if (activeTab === 'billing') {
+                    contentArea.innerHTML = getBillingHTML();
+                }
+                lucide.createIcons();
+            };
+
+            const renderChart = () => {
+                const ctx = document.getElementById('usage-chart')?.getContext('2d');
+                if (!ctx) return;
+                if(usageChart) usageChart.destroy();
+                usageChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: usageData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(31, 41, 55, 0.8)',
+                                borderRadius: 8,
+                                padding: 12,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb' },
+                                ticks: { color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280' }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // --- EVENT HANDLERS ---
+            const handleNavClick = (e) => {
+                const targetTab = e.currentTarget.dataset.tab;
+                if (targetTab === activeTab) return;
+                
+                activeTab = targetTab;
+                navItems.forEach(item => {
+                    if (item.dataset.tab === activeTab) {
+                        item.classList.add('bg-blue-600', 'text-white');
+                        item.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    } else {
+                        item.classList.remove('bg-blue-600', 'text-white');
+                        item.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    }
+                });
+                render();
+            };
+
+            const handleDeviceInteraction = (e) => {
+                const button = e.target.closest('button');
+                if (!button) return;
+
+                const card = e.target.closest('[data-device-id]');
+                const deviceId = parseInt(card.dataset.deviceId);
+                const device = devices.find(d => d.id === deviceId);
+                if (!device) return;
+
+                const action = button.dataset.action;
+                switch (action) {
+                    case 'toggle-power':
+                        device.status = device.status === 'active' ? 'inactive' : 'active';
+                        break;
+                    case 'temp-up':
+                        device.settings.temp++;
+                        break;
+                    case 'temp-down':
+                        device.settings.temp--;
+                        break;
+                    case 'toggle-lock':
+                        device.settings.locked = !device.settings.locked;
+                        break;
+                }
+                render();
+            };
+            
+            const openModal = () => {
+                modal.classList.remove('hidden');
+                modalStep1.classList.remove('hidden');
+                modalStep2.classList.add('hidden');
+                simInput.value = '';
+            };
+
+            const closeModal = () => modal.classList.add('hidden');
+
+            const handleDiscover = () => {
+                if (!simInput.value) return;
+                discoverBtn.textContent = 'Discovering...';
+                discoverBtn.disabled = true;
+
+                setTimeout(() => {
+                    // Mock discovery
+                    const discoveredDevice = { name: 'Smart Meter', type: 'Energy Monitor', icon: 'zap' };
+                    document.getElementById('discovered-device-icon').innerHTML = createIcon(discoveredDevice.icon, 'text-blue-500', 48);
+                    document.getElementById('discovered-device-name').textContent = discoveredDevice.name;
+                    document.getElementById('discovered-device-type').textContent = discoveredDevice.type;
+                    lucide.createIcons();
+                    
+                    modalStep1.classList.add('hidden');
+                    modalStep2.classList.remove('hidden');
+                    discoverBtn.textContent = 'Discover Device';
+                    discoverBtn.disabled = false;
+                }, 1500);
+            };
+
+            const handleActivate = () => {
+                activateBtn.textContent = 'Activating...';
+                activateBtn.disabled = true;
+
+                setTimeout(() => {
+                    const newDevice = {
+                        id: Date.now(),
+                        name: 'Smart Meter',
+                        type: 'Energy Monitor',
+                        status: 'active',
+                        icon: 'zap',
+                        settings: {},
+                        usage: 0,
+                        plan: 'Basic IoT'
+                    };
+                    devices.push(newDevice);
+                    closeModal();
+                    render();
+                    activateBtn.textContent = 'Activate & Add';
+                    activateBtn.disabled = false;
+                }, 2000);
+            };
+            
+            const handleThemeToggle = () => {
+                document.documentElement.classList.toggle('dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIconSun.classList.remove('hidden');
+                    themeIconMoon.classList.add('hidden');
+                } else {
+                    themeIconSun.classList.add('hidden');
+                    themeIconMoon.classList.remove('hidden');
+                }
+                // Re-render chart with new theme colors
+                if (activeTab === 'dashboard') renderChart();
+            }
+
+            // --- INITIALIZATION ---
+            navItems.forEach(item => item.addEventListener('click', handleNavClick));
+            cancelModalBtn.addEventListener('click', closeModal);
+            discoverBtn.addEventListener('click', handleDiscover);
+            activateBtn.addEventListener('click', handleActivate);
+            themeToggle.addEventListener('click', handleThemeToggle);
+
+            // Initial render
+            render();
+            
+            // Set initial theme icon
+            if (document.documentElement.classList.contains('dark')) {
+                themeIconSun.classList.remove('hidden');
+                themeIconMoon.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
