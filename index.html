@@ -77,48 +77,14 @@
         </main>
     </div>
 
-    <!-- Add Device Modal -->
-    <div id="add-device-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 w-full max-w-md">
-            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">Add New Device</h2>
-            <!-- Step 1: Discover -->
-            <div id="modal-step-1">
-                <p class="text-center text-gray-600 dark:text-gray-300 mb-4">Enter the SIM number of your IoT device for one-click activation.</p>
-                <input id="sim-input" type="text" placeholder="e.g., 89xxxxxxxxxxxxxx" class="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-center mb-4">
-                <button id="discover-btn" class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400">
-                    Discover Device
-                </button>
-            </div>
-            <!-- Step 2: Activate -->
-            <div id="modal-step-2" class="hidden text-center">
-                 <div class="flex justify-center mb-4">
-                    <div id="discovered-device-icon" class="p-4 bg-blue-100 dark:bg-blue-800 rounded-full">
-                        <!-- Icon will be injected here -->
-                    </div>
-                </div>
-                <h3 id="discovered-device-name" class="text-xl font-semibold text-gray-800 dark:text-white"></h3>
-                <p id="discovered-device-type" class="text-gray-500 dark:text-gray-400 mb-6"></p>
-                <button id="activate-btn" class="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400">
-                    Activate & Add
-                </button>
-            </div>
-            <button id="cancel-modal-btn" class="w-full mt-4 py-2 text-gray-600 dark:text-gray-300">Cancel</button>
-        </div>
-    </div>
+
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DATA ---
-            const initialDevices = [
-                { id: 1, name: 'Living Room AC', type: 'Smart AC', status: 'active', icon: 'wind', settings: { temp: 22, mode: 'cool' }, usage: 7.2, plan: 'Premium IoT' },
-                { id: 2, name: 'Main Door Lock', type: 'Smart Lock', status: 'active', icon: 'lock', settings: { locked: true }, usage: 0.5, plan: 'Home Security' },
-                { id: 3, name: 'Garden Sprinkler', type: 'Smart Sprinkler', status: 'inactive', icon: 'droplet', settings: { enabled: false, schedule: '6 AM' }, usage: 2.1, plan: 'Basic IoT' },
-                { id: 4, name: 'Solar Panel', type: 'Energy Monitor', status: 'active', icon: 'sun', settings: { output: 1.2 }, usage: 0.1, plan: 'Premium IoT' },
-                { id: 5, name: 'Security Cam', type: 'Camera', status: 'active', icon: 'shield', settings: { streaming: true }, usage: 15.8, plan: 'Home Security' },
-            ];
-
-            const usageData = {
+            let devices = [];
+            let usageData = {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
                 datasets: [{
                     label: 'Usage (GB)',
@@ -140,20 +106,103 @@
                 { id: 'security', name: 'Home Security', price: 20, icon: 'shield', features: ['Unlimited security devices', '24/7 monitoring', 'Cloud storage (30GB)', 'Emergency dispatch']},
             ];
 
-            let devices = [...initialDevices];
+            // --- DATA LOADING FUNCTIONS ---
+            async function loadDevices() {
+                try {
+                    console.log('Loading devices from API...');
+                    const response = await fetch('/api/devices');
+                    console.log('Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API Error:', errorText);
+                        throw new Error(`Failed to load devices: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    devices = data.devices || [];
+                    console.log('Devices loaded from API:', devices);
+                } catch (error) {
+                    console.error('Error loading devices from API:', error);
+                    
+                    // Fallback 1: try to load from local file
+                    try {
+                        const response = await fetch('devices.json');
+                        if (response.ok) {
+                            const data = await response.json();
+                            devices = data.devices || [];
+                            console.log('Devices loaded from local file:', devices);
+                            return;
+                        }
+                    } catch (fallbackError) {
+                        console.error('Fallback loading from file failed:', fallbackError);
+                    }
+                    
+                    // Fallback 2: try to load from localStorage
+                    try {
+                        const stored = localStorage.getItem('iot-devices');
+                        if (stored) {
+                            const data = JSON.parse(stored);
+                            devices = data.devices || [];
+                            console.log('Devices loaded from localStorage:', devices);
+                            return;
+                        }
+                    } catch (localStorageError) {
+                        console.error('Fallback loading from localStorage failed:', localStorageError);
+                    }
+                    
+                    // Final fallback: empty array
+                    devices = [];
+                    console.log('Using empty devices array as fallback');
+                }
+            }
+
+            async function saveDevices() {
+                try {
+                    const data = {
+                        devices: devices,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    console.log('Saving devices to API:', data);
+                    
+                    const response = await fetch('/api/devices', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    console.log('Save response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Save API Error:', errorText);
+                        throw new Error(`Failed to save devices: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('Devices saved successfully to API:', result);
+                } catch (error) {
+                    console.error('Error saving devices to API:', error);
+                    
+                    // Fallback: save to localStorage
+                    try {
+                        localStorage.setItem('iot-devices', JSON.stringify({
+                            devices: devices,
+                            lastUpdated: new Date().toISOString()
+                        }));
+                        console.log('Devices saved to localStorage as fallback');
+                    } catch (fallbackError) {
+                        console.error('Fallback save to localStorage failed:', fallbackError);
+                    }
+                }
+            }
             let activeTab = 'dashboard';
             let usageChart = null;
 
             // --- DOM ELEMENTS ---
             const contentArea = document.getElementById('content-area');
             const navItems = document.querySelectorAll('.nav-item');
-            const modal = document.getElementById('add-device-modal');
-            const cancelModalBtn = document.getElementById('cancel-modal-btn');
-            const discoverBtn = document.getElementById('discover-btn');
-            const activateBtn = document.getElementById('activate-btn');
-            const simInput = document.getElementById('sim-input');
-            const modalStep1 = document.getElementById('modal-step-1');
-            const modalStep2 = document.getElementById('modal-step-2');
             const themeToggle = document.getElementById('theme-toggle');
             const themeIconSun = document.getElementById('theme-icon-sun');
             const themeIconMoon = document.getElementById('theme-icon-moon');
@@ -164,18 +213,55 @@
             const createIcon = (name, classes = '', size = 24) => `<div data-lucide="${name}" class="${classes}" style="width:${size}px; height:${size}px;"></div>`;
 
             const getDeviceControlsHTML = (device) => {
+                const isActive = device.status === 'active';
+                const disabledClass = isActive ? '' : 'opacity-50 cursor-not-allowed';
+                const disabledAttr = isActive ? '' : 'disabled';
+                
                 switch (device.type) {
                     case 'Smart AC':
                         return `
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-2xl text-gray-700 dark:text-gray-200">${device.settings.temp}°C</span>
+                            <div class="flex items-center justify-between ${disabledClass}">
+                                <span class="font-bold text-2xl text-gray-700 dark:text-gray-200">${device.settings.temp || 22}°C</span>
                                 <div>
-                                    <button data-action="temp-up" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-l-md">+</button>
-                                    <button data-action="temp-down" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-r-md">-</button>
+                                    <button data-action="temp-up" ${disabledAttr} class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-l-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ${!isActive ? 'cursor-not-allowed' : ''}">+</button>
+                                    <button data-action="temp-down" ${disabledAttr} class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-r-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ${!isActive ? 'cursor-not-allowed' : ''}">-</button>
                                 </div>
-                            </div>`;
+                            </div>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
                     case 'Smart Lock':
-                        return `<button data-action="toggle-lock" class="w-full py-2 rounded-lg text-white font-semibold ${device.settings.locked ? 'bg-red-500' : 'bg-green-500'}">${device.settings.locked ? 'Locked' : 'Unlocked'}</button>`;
+                        return `
+                            <button data-action="toggle-lock" ${disabledAttr} class="w-full py-2 rounded-lg text-white font-semibold transition-colors ${device.settings.locked ? 'bg-red-500' : 'bg-green-500'} ${!isActive ? 'opacity-50 cursor-not-allowed' : ''}">
+                                ${device.settings.locked ? 'Locked' : 'Unlocked'}
+                            </button>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    case 'Smart Bulb':
+                    case 'Smart LED Strip':
+                        const brightness = device.settings.brightness !== undefined ? device.settings.brightness : 50;
+                        const color = device.settings.color || '#ffffff';
+                        return `
+                            <div class="space-y-3 ${disabledClass}">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Brightness</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">${brightness}%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="${brightness}" 
+                                       data-action="brightness" ${disabledAttr} 
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ${!isActive ? 'cursor-not-allowed' : ''}">
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Color</span>
+                                    <input type="color" value="${color}" 
+                                           data-action="color" ${disabledAttr} 
+                                           class="w-8 h-8 rounded border-2 border-gray-300 dark:border-gray-600 cursor-pointer ${!isActive ? 'cursor-not-allowed' : ''}">
+                                </div>
+                            </div>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    case 'Smart Switch':
+                        return `
+                            <button data-action="toggle-power" ${disabledAttr} class="w-full py-2 rounded-lg text-white font-semibold transition-colors ${device.settings.power ? 'bg-green-500' : 'bg-red-500'} ${!isActive ? 'opacity-50 cursor-not-allowed' : ''}">
+                                ${device.settings.power ? 'ON' : 'OFF'}
+                            </button>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
                     default:
                         return `<p class="text-sm text-gray-500 dark:text-gray-400">No specific controls</p>`;
                 }
@@ -184,8 +270,10 @@
             const getDeviceCardHTML = (device) => {
                 const statusColor = device.status === 'active' ? 'blue' : 'gray';
                 const powerButtonColor = device.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500';
+                const isActive = device.status === 'active';
+                
                 return createCard(`
-                    <div class="flex flex-col justify-between h-full ${device.status !== 'active' ? 'opacity-50' : ''}" data-device-id="${device.id}">
+                    <div class="flex flex-col justify-between h-full ${!isActive ? 'opacity-75' : ''}" data-device-id="${device.id}">
                         <div>
                             <div class="flex justify-between items-start">
                                 <div class="flex items-center space-x-3">
@@ -195,11 +283,22 @@
                                     <div>
                                         <h4 class="font-bold text-gray-800 dark:text-white">${device.name}</h4>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">${device.type}</p>
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            <div class="w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}"></div>
+                                            <span class="text-xs font-medium ${isActive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                                                ${isActive ? 'Online' : 'Offline'}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 ${powerButtonColor}">
-                                    ${createIcon('power', '', 20)}
-                                </button>
+                                <div class="flex items-center space-x-2">
+                                    <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 ${powerButtonColor} hover:scale-105">
+                                        ${createIcon('power', '', 20)}
+                                    </button>
+                                    <button data-action="remove-device" class="p-2 rounded-full transition-all duration-300 bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:scale-105" title="Remove Device">
+                                        ${createIcon('trash-2', '', 16)}
+                                    </button>
+                                </div>
                             </div>
                             <div class="mt-4 space-y-2">
                                 ${getDeviceControlsHTML(device)}
@@ -244,10 +343,10 @@
                     <div>
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
-                            <button id="add-device-btn" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            <a href="add-device.html" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                                 ${createIcon('plus-circle', '', 20)}
                                 <span>Add Device</span>
-                            </button>
+                            </a>
                         </div>
                         <div id="device-list" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             ${devices.map(getDeviceCardHTML).join('')}
@@ -308,7 +407,6 @@
                 if (activeTab === 'dashboard') {
                     contentArea.innerHTML = getDashboardHTML();
                     renderChart();
-                    document.getElementById('add-device-btn').addEventListener('click', openModal);
                     document.getElementById('device-list').addEventListener('click', handleDeviceInteraction);
                 } else if (activeTab === 'billing') {
                     contentArea.innerHTML = getBillingHTML();
@@ -369,81 +467,68 @@
 
             const handleDeviceInteraction = (e) => {
                 const button = e.target.closest('button');
-                if (!button) return;
+                const input = e.target.closest('input');
+                const target = button || input;
+                
+                if (!target) return;
 
                 const card = e.target.closest('[data-device-id]');
                 const deviceId = parseInt(card.dataset.deviceId);
                 const device = devices.find(d => d.id === deviceId);
                 if (!device) return;
 
-                const action = button.dataset.action;
+                const action = target.dataset.action;
+                
+                // Handle device removal (works for all devices regardless of status)
+                if (action === 'remove-device') {
+                    if (confirm(`Are you sure you want to remove "${device.name}"? This action cannot be undone.`)) {
+                        devices = devices.filter(d => d.id !== deviceId);
+                        render();
+                        saveDevices();
+                    }
+                    return;
+                }
+                
+                // Allow power toggle for all devices (to turn them on/off)
+                if (action === 'toggle-power') {
+                    device.status = device.status === 'active' ? 'inactive' : 'active';
+                    render();
+                    saveDevices();
+                    return;
+                }
+                
+                // Prevent all other actions for inactive devices
+                if (device.status !== 'active') {
+                    console.log('Device is inactive, ignoring control action:', action);
+                    return;
+                }
+
+                // Handle active device controls
                 switch (action) {
-                    case 'toggle-power':
-                        device.status = device.status === 'active' ? 'inactive' : 'active';
-                        break;
                     case 'temp-up':
-                        device.settings.temp++;
+                        device.settings.temp = (device.settings.temp || 22) + 1;
                         break;
                     case 'temp-down':
-                        device.settings.temp--;
+                        device.settings.temp = (device.settings.temp || 22) - 1;
                         break;
                     case 'toggle-lock':
                         device.settings.locked = !device.settings.locked;
                         break;
+                    case 'brightness':
+                        const brightnessValue = parseInt(target.value);
+                        device.settings.brightness = brightnessValue;
+                        // Update the brightness display immediately
+                        const brightnessDisplay = card.querySelector('.text-sm.text-gray-500');
+                        if (brightnessDisplay) {
+                            brightnessDisplay.textContent = `${brightnessValue}%`;
+                        }
+                        break;
+                    case 'color':
+                        device.settings.color = target.value;
+                        break;
                 }
                 render();
-            };
-            
-            const openModal = () => {
-                modal.classList.remove('hidden');
-                modalStep1.classList.remove('hidden');
-                modalStep2.classList.add('hidden');
-                simInput.value = '';
-            };
-
-            const closeModal = () => modal.classList.add('hidden');
-
-            const handleDiscover = () => {
-                if (!simInput.value) return;
-                discoverBtn.textContent = 'Discovering...';
-                discoverBtn.disabled = true;
-
-                setTimeout(() => {
-                    // Mock discovery
-                    const discoveredDevice = { name: 'Smart Meter', type: 'Energy Monitor', icon: 'zap' };
-                    document.getElementById('discovered-device-icon').innerHTML = createIcon(discoveredDevice.icon, 'text-blue-500', 48);
-                    document.getElementById('discovered-device-name').textContent = discoveredDevice.name;
-                    document.getElementById('discovered-device-type').textContent = discoveredDevice.type;
-                    lucide.createIcons();
-                    
-                    modalStep1.classList.add('hidden');
-                    modalStep2.classList.remove('hidden');
-                    discoverBtn.textContent = 'Discover Device';
-                    discoverBtn.disabled = false;
-                }, 1500);
-            };
-
-            const handleActivate = () => {
-                activateBtn.textContent = 'Activating...';
-                activateBtn.disabled = true;
-
-                setTimeout(() => {
-                    const newDevice = {
-                        id: Date.now(),
-                        name: 'Smart Meter',
-                        type: 'Energy Monitor',
-                        status: 'active',
-                        icon: 'zap',
-                        settings: {},
-                        usage: 0,
-                        plan: 'Basic IoT'
-                    };
-                    devices.push(newDevice);
-                    closeModal();
-                    render();
-                    activateBtn.textContent = 'Activate & Add';
-                    activateBtn.disabled = false;
-                }, 2000);
+                saveDevices(); // Save changes to storage
             };
             
             const handleThemeToggle = () => {
@@ -461,13 +546,12 @@
 
             // --- INITIALIZATION ---
             navItems.forEach(item => item.addEventListener('click', handleNavClick));
-            cancelModalBtn.addEventListener('click', closeModal);
-            discoverBtn.addEventListener('click', handleDiscover);
-            activateBtn.addEventListener('click', handleActivate);
             themeToggle.addEventListener('click', handleThemeToggle);
 
-            // Initial render
-            render();
+            // Load devices and initialize
+            loadDevices().then(() => {
+                render();
+            });
             
             // Set initial theme icon
             if (document.documentElement.classList.contains('dark')) {

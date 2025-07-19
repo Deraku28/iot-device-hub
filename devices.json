@@ -1,0 +1,146 @@
+{
+  "devices": [
+    {
+      "id": 1,
+      "name": "Living Room AC",
+      "type": "Smart AC",
+      "category": "climate",
+      "status": "active",
+      "icon": "wind",
+      "location": "Living Room",
+      "settings": {
+        "temp": 22,
+        "mode": "cool",
+        "fan-speed": "auto"
+      },
+      "usage": 7.2,
+      "plan": "Premium IoT",
+      "addedDate": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Main Door Lock",
+      "type": "Smart Lock",
+      "category": "security",
+      "status": "active",
+      "icon": "lock",
+      "location": "Main Entrance",
+      "settings": {
+        "locked": true,
+        "auto-lock": true,
+        "access-codes": ["1234", "5678"]
+      },
+      "usage": 0.5,
+      "plan": "Home Security",
+      "addedDate": "2024-01-10T14:20:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Garden Sprinkler",
+      "type": "Smart Sprinkler",
+      "category": "irrigation",
+      "status": "inactive",
+      "icon": "droplet",
+      "location": "Garden",
+      "settings": {
+        "enabled": false,
+        "schedule": "06:00",
+        "water-flow": 50,
+        "zones": ["front", "back"]
+      },
+      "usage": 2.1,
+      "plan": "Basic IoT",
+      "addedDate": "2024-01-05T08:15:00Z"
+    },
+    {
+      "id": 4,
+      "name": "Solar Panel",
+      "type": "Energy Monitor",
+      "category": "energy",
+      "status": "active",
+      "icon": "sun",
+      "location": "Roof",
+      "settings": {
+        "output": 1.2,
+        "monitoring": true,
+        "alerts": true
+      },
+      "usage": 0.1,
+      "plan": "Premium IoT",
+      "addedDate": "2024-01-12T11:45:00Z"
+    },
+    {
+      "id": 5,
+      "name": "Security Cam",
+      "type": "Camera",
+      "category": "security",
+      "status": "active",
+      "icon": "shield",
+      "location": "Front Door",
+      "settings": {
+        "streaming": true,
+        "recording": true,
+        "motion-detection": true,
+        "night-vision": true
+      },
+      "usage": 15.8,
+      "plan": "Home Security",
+      "addedDate": "2024-01-08T16:30:00Z"
+    },
+    {
+      "id": 6,
+      "name": "Living Room Light",
+      "type": "Smart Bulb",
+      "category": "lighting",
+      "status": "active",
+      "icon": "lightbulb",
+      "location": "Living Room",
+      "settings": {
+        "brightness": 75,
+        "color": "#ffd700",
+        "schedule-start": "18:00",
+        "schedule-end": "23:00"
+      },
+      "usage": 2.3,
+      "plan": "Premium IoT",
+      "addedDate": "2024-01-16T09:15:00Z"
+    },
+    {
+      "id": 7,
+      "name": "Kitchen Strip",
+      "type": "Smart LED Strip",
+      "category": "lighting",
+      "status": "active",
+      "icon": "zap",
+      "location": "Kitchen",
+      "settings": {
+        "brightness": 60,
+        "color": "#ffffff",
+        "pattern": "solid",
+        "schedule-start": "06:00",
+        "schedule-end": "22:00"
+      },
+      "usage": 1.8,
+      "plan": "Basic IoT",
+      "addedDate": "2024-01-16T10:30:00Z"
+    },
+    {
+      "id": 8,
+      "name": "Bedroom Switch",
+      "type": "Smart Switch",
+      "category": "lighting",
+      "status": "inactive",
+      "icon": "toggle-left",
+      "location": "Bedroom",
+      "settings": {
+        "power": false,
+        "schedule-start": "20:00",
+        "schedule-end": "07:00"
+      },
+      "usage": 0.9,
+      "plan": "Basic IoT",
+      "addedDate": "2024-01-16T11:45:00Z"
+    }
+  ],
+  "lastUpdated": "2024-01-15T10:30:00Z"
+} 
