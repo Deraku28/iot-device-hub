@@ -15,6 +15,68 @@
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         .font-sans { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        /* Custom range slider styles */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-webkit-slider-track {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .dark input[type="range"]::-webkit-slider-track {
+            background: #374151;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #3b82f6;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+        
+        input[type="range"]::-moz-range-track {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            border: none;
+        }
+        
+        .dark input[type="range"]::-moz-range-track {
+            background: #374151;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            background: #3b82f6;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
@@ -463,6 +525,24 @@
             const container = document.getElementById('device-specific-settings');
             container.innerHTML = getDeviceSpecificSettings(device);
             container.classList.remove('hidden');
+            
+            // Add event listeners for interactive elements
+            if (device.id === 'smart-bulb' || device.id === 'led-strip' || device.id === 'smart-dimmer' || device.id === 'ceiling-light' || device.id === 'table-lamp') {
+                const brightnessSlider = document.getElementById('brightness-slider');
+                const brightnessValue = document.getElementById('brightness-value');
+                
+                if (brightnessSlider && brightnessValue) {
+                    // Update value on slider change
+                    brightnessSlider.addEventListener('input', function() {
+                        brightnessValue.textContent = this.value + '%';
+                    });
+                    
+                    // Update value on slider move (for real-time feedback)
+                    brightnessSlider.addEventListener('mousemove', function() {
+                        brightnessValue.textContent = this.value + '%';
+                    });
+                }
+            }
         }
 
 
@@ -473,11 +553,16 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
-                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" 
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Current: <span id="brightness-value" class="font-semibold text-blue-600 dark:text-blue-400">50%</span></span>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" id="brightness-slider"
                                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                             <div class="flex justify-between text-xs text-gray-500 mt-1">
                                 <span>0%</span>
+                                <span>25%</span>
                                 <span>50%</span>
+                                <span>75%</span>
                                 <span>100%</span>
                             </div>
                         </div>
@@ -506,6 +591,87 @@
                                 <option value="cool">Cool</option>
                                 <option value="fan">Fan Only</option>
                             </select>
+                        </div>
+                    </div>
+                `,
+                'led-strip': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Current: <span id="brightness-value" class="font-semibold text-blue-600 dark:text-blue-400">50%</span></span>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" id="brightness-slider"
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>25%</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Color</label>
+                            <input type="color" value="#ffffff" name="defaultColor" 
+                                   class="w-full h-12 rounded-lg border border-gray-300 dark:border-gray-600 cursor-pointer">
+                        </div>
+                    </div>
+                `,
+                'smart-dimmer': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Current: <span id="brightness-value" class="font-semibold text-blue-600 dark:text-blue-400">50%</span></span>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" id="brightness-slider"
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>25%</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                'ceiling-light': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Current: <span id="brightness-value" class="font-semibold text-blue-600 dark:text-blue-400">50%</span></span>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" id="brightness-slider"
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>25%</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                'table-lamp': `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Brightness</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Current: <span id="brightness-value" class="font-semibold text-blue-600 dark:text-blue-400">50%</span></span>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" name="defaultBrightness" id="brightness-slider"
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>25%</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span>100%</span>
+                            </div>
                         </div>
                     </div>
                 `,
