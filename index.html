@@ -359,6 +359,7 @@
             }
             let activeTab = 'dashboard';
             let usageChart = null;
+            let viewMode = 'grouped'; // 'grouped' or 'list'
 
             // --- DOM ELEMENTS ---
             const contentArea = document.getElementById('content-area');
@@ -471,6 +472,111 @@
                 `, 'flex flex-col');
             };
             
+            const getRoomOverviewCards = () => {
+                // Group devices by room
+                const rooms = {};
+                devices.forEach(device => {
+                    const room = device.location || 'Unknown Room';
+                    if (!rooms[room]) {
+                        rooms[room] = [];
+                    }
+                    rooms[room].push(device);
+                });
+                
+                // Sort rooms alphabetically
+                const sortedRooms = Object.keys(rooms).sort();
+                
+                return sortedRooms.map(room => {
+                    const roomDevices = rooms[room];
+                    const activeDevices = roomDevices.filter(d => d.status === 'active').length;
+                    const totalDevices = roomDevices.length;
+                    const hasLights = roomDevices.some(d => 
+                        d.type.includes('Light') || d.type.includes('Bulb') || d.type.includes('LED')
+                    );
+                    
+                    return `
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer" onclick="scrollToRoom('${room}')">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-800 dark:text-white text-sm">${room}</h4>
+                                <div class="flex items-center space-x-1">
+                                    ${hasLights ? `
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500">
+                                            <path d="M9 21h6"></path>
+                                            <path d="M10 21v-4a2 2 0 0 1 4 0v4"></path>
+                                            <path d="M4.22 10.22a6 6 0 0 1 0-8.49"></path>
+                                            <path d="M1.18 6.34a6 6 0 0 0 0 8.7"></path>
+                                            <path d="M6.34 1.18a6 6 0 0 1 8.49 0"></path>
+                                            <path d="M6.34 22.82a6 6 0 0 1-8.49 0"></path>
+                                        </svg>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-gray-900 dark:text-white">${totalDevices}</span>
+                                <div class="text-right">
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">devices</div>
+                                    ${activeDevices > 0 ? `
+                                        <div class="text-xs text-green-600 dark:text-green-400 font-medium">${activeDevices} active</div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            };
+            
+            const getDevicesByRoom = () => {
+                // Group devices by room
+                const rooms = {};
+                devices.forEach(device => {
+                    const room = device.location || 'Unknown Room';
+                    if (!rooms[room]) {
+                        rooms[room] = [];
+                    }
+                    rooms[room].push(device);
+                });
+                
+                // Sort rooms alphabetically
+                const sortedRooms = Object.keys(rooms).sort();
+                
+                return sortedRooms.map(room => {
+                    const roomDevices = rooms[room];
+                    const activeDevices = roomDevices.filter(d => d.status === 'active').length;
+                    const totalDevices = roomDevices.length;
+                    
+                    return `
+                        <div class="mb-8" id="room-${room.replace(/\s+/g, '-').toLowerCase()}">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onclick="scrollToRoom('${room}')">${room}</h3>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-full">
+                                        ${totalDevices} device${totalDevices !== 1 ? 's' : ''}
+                                    </span>
+                                    ${activeDevices > 0 ? `
+                                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 text-xs font-medium rounded-full">
+                                            ${activeDevices} active
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    ${roomDevices.some(d => d.type.includes('Light') || d.type.includes('Bulb')) ? `
+                                        <button class="room-action-btn px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors" data-room="${room}" data-action="toggle-lights">
+                                            Toggle Lights
+                                        </button>
+                                    ` : ''}
+                                    <button class="room-action-btn px-3 py-1 bg-gray-600 text-white text-xs rounded-lg hover:bg-gray-700 transition-colors" data-room="${room}" data-action="toggle-all">
+                                        Toggle All
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                ${roomDevices.map(getDeviceCardHTML).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            };
+            
             const getDashboardHTML = () => `
                 <div class="space-y-6">
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -499,16 +605,37 @@
                             </div>
                         `, 'bg-gradient-to-br from-blue-500 to-purple-600 text-white')}
                     </div>
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Room Overview</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+                            ${getRoomOverviewCards()}
+                        </div>
+                    </div>
                     <div>
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
-                            <a href="add-device.html" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                                ${createIcon('plus-circle', '', 20)}
-                                <span>Add Device</span>
-                            </a>
+                            <div class="flex items-center space-x-3">
+                                <button id="toggle-view" class="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="view-icon">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <span class="text-sm" id="view-text">Group by Room</span>
+                                </button>
+                                <a href="add-device.html" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    ${createIcon('plus-circle', '', 20)}
+                                    <span>Add Device</span>
+                                </a>
+                            </div>
                         </div>
-                        <div id="device-list" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            ${devices.map(getDeviceCardHTML).join('')}
+                        <div id="device-list">
+                            ${viewMode === 'grouped' ? getDevicesByRoom() : `
+                                <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    ${devices.map(getDeviceCardHTML).join('')}
+                                </div>
+                            `}
                         </div>
                     </div>
                 </div>
@@ -567,11 +694,95 @@
                 if (activeTab === 'dashboard') {
                     contentArea.innerHTML = getDashboardHTML();
                     renderChart();
-                    document.getElementById('device-list').addEventListener('click', handleDeviceInteraction);
+                    setupDashboardEventListeners();
                 } else if (activeTab === 'billing') {
                     contentArea.innerHTML = getBillingHTML();
                 }
                 lucide.createIcons();
+            };
+            
+            const setupDashboardEventListeners = () => {
+                const deviceList = document.getElementById('device-list');
+                if (deviceList) {
+                    deviceList.addEventListener('click', handleDeviceInteraction);
+                }
+                
+                // View toggle
+                const toggleView = document.getElementById('toggle-view');
+                if (toggleView) {
+                    toggleView.addEventListener('click', toggleViewMode);
+                }
+                
+                // Room action buttons
+                document.querySelectorAll('.room-action-btn').forEach(btn => {
+                    btn.addEventListener('click', handleRoomAction);
+                });
+            };
+            
+            const toggleViewMode = () => {
+                viewMode = viewMode === 'grouped' ? 'list' : 'grouped';
+                
+                // Update button text and icon
+                const viewText = document.getElementById('view-text');
+                const viewIcon = document.getElementById('view-icon');
+                
+                if (viewMode === 'grouped') {
+                    viewText.textContent = 'Group by Room';
+                    viewIcon.innerHTML = `
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    `;
+                } else {
+                    viewText.textContent = 'List View';
+                    viewIcon.innerHTML = `
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    `;
+                }
+                
+                render();
+            };
+            
+            const scrollToRoom = (roomName) => {
+                const roomId = `room-${roomName.replace(/\s+/g, '-').toLowerCase()}`;
+                const roomElement = document.getElementById(roomId);
+                if (roomElement) {
+                    roomElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+            
+            // Make scrollToRoom globally accessible
+            window.scrollToRoom = scrollToRoom;
+            
+            const handleRoomAction = (e) => {
+                const room = e.target.getAttribute('data-room');
+                const action = e.target.getAttribute('data-action');
+                const roomDevices = devices.filter(d => d.location === room);
+                
+                switch (action) {
+                    case 'toggle-lights':
+                        const lightDevices = roomDevices.filter(d => 
+                            d.type.includes('Light') || d.type.includes('Bulb') || d.type.includes('LED')
+                        );
+                        lightDevices.forEach(device => {
+                            device.status = device.status === 'active' ? 'inactive' : 'active';
+                        });
+                        break;
+                    case 'toggle-all':
+                        roomDevices.forEach(device => {
+                            device.status = device.status === 'active' ? 'inactive' : 'active';
+                        });
+                        break;
+                }
+                
+                render();
+                saveDevices();
             };
 
             const renderChart = () => {

@@ -158,23 +158,105 @@
                             </div>
 
                             <div id="deviceLocationContainer" class="hidden">
-                                <label for="deviceLocation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location</label>
-                                <select id="deviceLocation" name="deviceLocation" required 
-                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                                    <option value="">Select a location</option>
-                                    <option value="Living Room">Living Room</option>
-                                    <option value="Kitchen">Kitchen</option>
-                                    <option value="Bedroom">Bedroom</option>
-                                    <option value="Bathroom">Bathroom</option>
-                                    <option value="Office">Office</option>
-                                    <option value="Garage">Garage</option>
-                                    <option value="Garden">Garden</option>
-                                    <option value="Hallway">Hallway</option>
-                                    <option value="Dining Room">Dining Room</option>
-                                    <option value="Basement">Basement</option>
-                                    <option value="Attic">Attic</option>
-                                    <option value="Other">Other</option>
-                                </select>
+                                <label for="deviceLocation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Room/Location</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Common Rooms</label>
+                                        <div class="grid grid-cols-1 gap-2">
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Living Room">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Living Room</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Kitchen">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Kitchen</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Bedroom">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Bedroom</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Bathroom">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Bathroom</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Other Areas</label>
+                                        <div class="grid grid-cols-1 gap-2">
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Office">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Office</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Dining Room">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Dining Room</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Garage">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Garage</span>
+                                                </div>
+                                            </button>
+                                            <button type="button" class="room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors" data-room="Hallway">
+                                                <div class="flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9,22 9,12 15,12 15,22"/>
+                                                    </svg>
+                                                    <span class="text-sm">Hallway</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-1">
+                                            <input type="text" id="customRoomInput" placeholder="Or enter a custom room name" 
+                                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+                                        </div>
+                                        <button type="button" id="addCustomRoom" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <input type="hidden" id="deviceLocation" name="deviceLocation" required>
                             </div>
 
                             <div id="custom-location" class="hidden">
@@ -427,6 +509,90 @@
             document.getElementById('next-btn').addEventListener('click', nextStep);
             document.getElementById('prev-btn').addEventListener('click', prevStep);
             document.getElementById('add-device-form').addEventListener('submit', handleSubmit);
+            
+            // Room selection functionality
+            setupRoomSelection();
+        }
+        
+        function setupRoomSelection() {
+            // Room button click handlers
+            document.querySelectorAll('.room-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const selectedRoom = this.getAttribute('data-room');
+                    
+                    // Remove active state from all buttons
+                    document.querySelectorAll('.room-btn').forEach(b => {
+                        b.classList.remove('bg-blue-100', 'dark:bg-blue-900/50', 'border-blue-500', 'dark:border-blue-400');
+                        b.classList.add('border-gray-300', 'dark:border-gray-600');
+                    });
+                    
+                    // Add active state to clicked button
+                    this.classList.remove('border-gray-300', 'dark:border-gray-600');
+                    this.classList.add('bg-blue-100', 'dark:bg-blue-900/50', 'border-blue-500', 'dark:border-blue-400');
+                    
+                    // Set the hidden input value
+                    document.getElementById('deviceLocation').value = selectedRoom;
+                });
+            });
+            
+            // Custom room input
+            document.getElementById('addCustomRoom').addEventListener('click', function() {
+                const customRoomInput = document.getElementById('customRoomInput');
+                const customRoom = customRoomInput.value.trim();
+                
+                if (customRoom) {
+                    // Create a new room button
+                    const newRoomBtn = document.createElement('button');
+                    newRoomBtn.type = 'button';
+                    newRoomBtn.className = 'room-btn text-left px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-colors';
+                    newRoomBtn.setAttribute('data-room', customRoom);
+                    newRoomBtn.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9,22 9,12 15,12 15,22"/>
+                            </svg>
+                            <span class="text-sm">${customRoom}</span>
+                        </div>
+                    `;
+                    
+                    // Add click handler to new button
+                    newRoomBtn.addEventListener('click', function() {
+                        const selectedRoom = this.getAttribute('data-room');
+                        
+                        // Remove active state from all buttons
+                        document.querySelectorAll('.room-btn').forEach(b => {
+                            b.classList.remove('bg-blue-100', 'dark:bg-blue-900/50', 'border-blue-500', 'dark:border-blue-400');
+                            b.classList.add('border-gray-300', 'dark:border-gray-600');
+                        });
+                        
+                        // Add active state to clicked button
+                        this.classList.remove('border-gray-300', 'dark:border-gray-600');
+                        this.classList.add('bg-blue-100', 'dark:bg-blue-900/50', 'border-blue-500', 'dark:border-blue-400');
+                        
+                        // Set the hidden input value
+                        document.getElementById('deviceLocation').value = selectedRoom;
+                    });
+                    
+                    // Add to the "Other Areas" section
+                    const otherAreasSection = document.querySelector('.space-y-2:last-child .grid');
+                    otherAreasSection.appendChild(newRoomBtn);
+                    
+                    // Clear input
+                    customRoomInput.value = '';
+                    
+                    // Select the new room
+                    newRoomBtn.click();
+                }
+            });
+            
+            // Enter key for custom room input
+            document.getElementById('customRoomInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('addCustomRoom').click();
+                }
+            });
         }
 
         function nextStep() {
@@ -464,12 +630,7 @@
                 return false;
             }
             if (!document.getElementById('deviceLocation').value) {
-                alert('Please select a location');
-                return false;
-            }
-            if (document.getElementById('deviceLocation').value === 'Other' && 
-                !document.getElementById('customLocationName').value.trim()) {
-                alert('Please enter a custom location name');
+                alert('Please select a room/location');
                 return false;
             }
             return true;
