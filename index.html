@@ -275,7 +275,31 @@
             // --- DATA LOADING FUNCTIONS ---
             async function loadDevices() {
                 try {
-                    console.log('Loading devices from local file...');
+                    console.log('Loading devices from localStorage first...');
+                    
+                    // Try to load from localStorage first (primary storage)
+                    const stored = localStorage.getItem('iot-devices');
+                    if (stored) {
+                        const data = JSON.parse(stored);
+                        devices = data.devices || [];
+                        console.log('Devices loaded from localStorage:', devices);
+                        
+                        // Update the JSON file as backup
+                        try {
+                            await fetch('devices.json', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data)
+                            });
+                            console.log('JSON file updated as backup');
+                        } catch (fileError) {
+                            console.log('Could not update JSON file (this is normal for file:// URLs)');
+                        }
+                        return;
+                    }
+                    
+                    // Fallback: try to load from local file
+                    console.log('No localStorage data, trying local file...');
                     const response = await fetch('devices.json');
                     console.log('Response status:', response.status);
                     
@@ -283,25 +307,16 @@
                         const data = await response.json();
                         devices = data.devices || [];
                         console.log('Devices loaded from local file:', devices);
+                        
+                        // Save to localStorage for future use
+                        localStorage.setItem('iot-devices', JSON.stringify(data));
+                        console.log('Devices saved to localStorage');
                         return;
                     } else {
                         throw new Error(`Failed to load devices: ${response.status} ${response.statusText}`);
                     }
                 } catch (error) {
-                    console.error('Error loading devices from file:', error);
-                    
-                    // Fallback: try to load from localStorage
-                    try {
-                        const stored = localStorage.getItem('iot-devices');
-                        if (stored) {
-                            const data = JSON.parse(stored);
-                            devices = data.devices || [];
-                            console.log('Devices loaded from localStorage:', devices);
-                            return;
-                        }
-                    } catch (localStorageError) {
-                        console.error('Fallback loading from localStorage failed:', localStorageError);
-                    }
+                    console.error('Error loading devices:', error);
                     
                     // Final fallback: empty array
                     devices = [];
@@ -316,7 +331,7 @@
                         lastUpdated: new Date().toISOString()
                     };
                     
-                    console.log('Saving devices to local file:', data);
+                    console.log('Saving devices to localStorage:', data);
                     
                     // Save to localStorage as primary storage
                     localStorage.setItem('iot-devices', JSON.stringify(data));
@@ -549,6 +564,7 @@
 
             // --- RENDER FUNCTIONS ---
             const render = () => {
+                console.log('Rendering with devices:', devices);
                 if (activeTab === 'dashboard') {
                     contentArea.innerHTML = getDashboardHTML();
                     renderChart();
@@ -695,6 +711,11 @@
 
             // Load devices and initialize
             loadDevices().then(() => {
+                console.log('Devices loaded, rendering...');
+                render();
+            }).catch(error => {
+                console.error('Failed to load devices:', error);
+                devices = [];
                 render();
             });
             
