@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Device Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.relative{position:relative}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-screen{height:100vh}.h-2{height:0.5rem}.h-48{height:12rem}.h-8{height:2rem}.h-full{height:100%}.w-24{width:6rem}.w-full{width:100%}.w-2{width:0.5rem}.w-8{width:2rem}.flex-1{flex:1 1 0%}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.appearance-none{-webkit-appearance:none;appearance:none}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-y-auto{overflow-y:auto}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-100\/80{background-color:rgb(243 244 246 / 0.8)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-green-500\/20{background-color:rgb(34 197 94 / 0.2)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-500\/20{background-color:rgb(239 68 68 / 0.2)}.bg-white\/20{background-color:rgb(255 255 255 / 0.2)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.font-sans{font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"}.text-2xl{font-size:1.5rem;line-height:2rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-purple-200{--tw-text-opacity:1;color:rgb(233 213 255 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-red-500\/30:hover{background-color:rgb(239 68 68 / 0.3)}.hover\:shadow-xl:hover{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (prefers-color-scheme: dark){.dark\:border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.dark\:border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.dark\:border-gray-700\/50{border-color:rgb(55 65 81 / 0.5)}.dark\:bg-gray-800\/50{background-color:rgb(31 41 55 / 0.5)}.dark\:bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-900\/80{background-color:rgb(17 24 39 / 0.8)}.dark\:bg-blue-800{--tw-bg-opacity:1;background-color:rgb(30 64 175 / var(--tw-bg-opacity, 1))}.dark\:text-gray-100{--tw-text-opacity:1;color:rgb(243 244 246 / var(--tw-text-opacity, 1))}.dark\:text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.dark\:text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.dark\:text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.dark\:text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.dark\:text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.dark\:hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}}</style></head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <nav class="w-24 bg-white dark:bg-gray-800/50 p-2 space-y-4 flex flex-col items-center shadow-md">
+            <div class="p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" class="lucide lucide-zap text-blue-500" style="width: 32px; height: 32px;"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+            </div>
+            <button data-tab="dashboard" class="nav-item flex flex-col items-center justify-center space-y-1 w-full py-3 rounded-lg transition-colors bg-blue-600 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="home" style="width: 24px; height: 24px;" class="lucide lucide-home"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span class="text-xs font-medium">Dashboard</span>
+            </button>
+            <button data-tab="billing" class="nav-item flex flex-col items-center justify-center space-y-1 w-full py-3 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="package" style="width: 24px; height: 24px;" class="lucide lucide-package"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"></path><path d="M12 22V12"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><path d="m7.5 4.27 9 5.15"></path></svg>
+                <span class="text-xs font-medium">Plans</span>
+            </button>
+            <div class="flex-grow"></div>
+            <button id="theme-toggle" class="p-3 rounded-full transition-all duration-300 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sun" id="theme-icon-sun" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="moon" id="theme-icon-moon" class="lucide lucide-moon hidden"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 h-screen overflow-y-auto">
+            <!-- Header -->
+            <header class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm z-10">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" class="lucide lucide-zap text-blue-500" style="width: 28px; height: 28px;"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">IoT Device Hub</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">User: 012-3456789</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="bell" class="lucide lucide-bell text-gray-500 dark:text-gray-400 cursor-pointer"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="settings" class="lucide lucide-settings text-gray-500 dark:text-gray-400 cursor-pointer"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content-area" class="p-6">
+                <div class="space-y-6">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ">
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Total Devices</h3>
+                            <p class="text-4xl font-bold text-blue-500">3</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ">
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Active Devices</h3>
+                            <p class="text-4xl font-bold text-green-500">3</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ">
+                            <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3>
+                            <div class="relative h-48">
+                                <canvas id="usage-chart" width="258" height="192" style="display: block; box-sizing: border-box; height: 192px; width: 258px;"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                            <h3 class="font-bold text-lg mb-2">Your Progress</h3>
+                            <div class="text-center mb-4">
+                                <p class="text-4xl font-bold">1250</p>
+                                <p class="text-purple-200">Eco-Warrior</p>
+                            </div>
+                            <div class="flex justify-center space-x-2">
+                                <span class="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">Energy Saver</span><span class="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">Early Adopter</span><span class="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">Automation Pro</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
+                            <a href="add-device.html" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus-circle" class="lucide lucide-plus-circle" style="width:20px; height:20px;"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+                                <span>Add Device</span>
+                            </a>
+                        </div>
+                        <div id="device-list" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl flex flex-col">
+                    <div class="flex flex-col justify-between h-full " data-device-id="1752908956137">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="lock" class="lucide lucide-lock text-blue-500 dark:text-blue-300" style="width:24px; height:24px;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Main Door Lock</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Smart Lock</p>
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                            <span class="text-xs font-medium text-green-600 dark:text-green-400">
+                                                Online
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 bg-green-500/20 text-green-500 hover:scale-105">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="power" class="lucide lucide-power" style="width:20px; height:20px;"><path d="M12 2v10"></path><path d="M18.4 6.6a9 9 0 1 1-12.77.04"></path></svg>
+                                    </button>
+                                    <button data-action="remove-device" class="p-2 rounded-full transition-all duration-300 bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:scale-105" title="Remove Device">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" class="lucide lucide-trash-2" style="width:16px; height:16px;"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                
+                            <button data-action="toggle-lock" class="w-full py-2 rounded-lg text-white font-semibold transition-colors bg-red-500 ">
+                                Locked
+                            </button>
+                            
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Usage: 0 GB</span>
+                            <span class="font-semibold text-blue-500">Basic IoT</span>
+                        </div>
+                    </div>
+                </div><div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl flex flex-col">
+                    <div class="flex flex-col justify-between h-full " data-device-id="1752910212013">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="camera" class="lucide lucide-camera text-blue-500 dark:text-blue-300" style="width:24px; height:24px;"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Main Door Security Camera</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Security Camera</p>
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                            <span class="text-xs font-medium text-green-600 dark:text-green-400">
+                                                Online
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 bg-green-500/20 text-green-500 hover:scale-105">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="power" class="lucide lucide-power" style="width:20px; height:20px;"><path d="M12 2v10"></path><path d="M18.4 6.6a9 9 0 1 1-12.77.04"></path></svg>
+                                    </button>
+                                    <button data-action="remove-device" class="p-2 rounded-full transition-all duration-300 bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:scale-105" title="Remove Device">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" class="lucide lucide-trash-2" style="width:16px; height:16px;"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No specific controls</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Usage: 0 GB</span>
+                            <span class="font-semibold text-blue-500">Basic IoT</span>
+                        </div>
+                    </div>
+                </div><div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl flex flex-col">
+                    <div class="flex flex-col justify-between h-full " data-device-id="1752910458637">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="lightbulb" class="lucide lucide-lightbulb text-blue-500 dark:text-blue-300" style="width:24px; height:24px;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Living Room LED 1</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Smart Bulb</p>
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                            <span class="text-xs font-medium text-green-600 dark:text-green-400">
+                                                Online
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 bg-green-500/20 text-green-500 hover:scale-105">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="power" class="lucide lucide-power" style="width:20px; height:20px;"><path d="M12 2v10"></path><path d="M18.4 6.6a9 9 0 1 1-12.77.04"></path></svg>
+                                    </button>
+                                    <button data-action="remove-device" class="p-2 rounded-full transition-all duration-300 bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:scale-105" title="Remove Device">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" class="lucide lucide-trash-2" style="width:16px; height:16px;"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                
+                            <div class="space-y-3 ">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Brightness</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">46%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="46" data-action="brightness" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ">
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Color</span>
+                                    <input type="color" value="#ffffff" data-action="color" class="w-8 h-8 rounded border-2 border-gray-300 dark:border-gray-600 cursor-pointer ">
+                                </div>
+                            </div>
+                            
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Usage: 0 GB</span>
+                            <span class="font-semibold text-blue-500">Basic IoT</span>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            let devices = [];
+            let usageData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Usage (GB)',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                }]
+            };
+
+            const gamification = {
+                points: 1250,
+                level: 'Eco-Warrior',
+                badges: ['Energy Saver', 'Early Adopter', 'Automation Pro'],
+            };
+            
+            const plans = [
+                { id: 'basic', name: 'Basic IoT', price: 5, icon: 'package', features: ['Up to 3 devices', 'Basic controls', 'Standard alerts']},
+                { id: 'premium', name: 'Premium IoT', price: 15, icon: 'star', features: ['Up to 10 devices', 'Advanced automation', 'Cloud storage (10GB)', 'AI insights']},
+                { id: 'security', name: 'Home Security', price: 20, icon: 'shield', features: ['Unlimited security devices', '24/7 monitoring', 'Cloud storage (30GB)', 'Emergency dispatch']},
+            ];
+
+            // --- DATA LOADING FUNCTIONS ---
+            async function loadDevices() {
+                try {
+                    console.log('Loading devices from local file...');
+                    const response = await fetch('devices.json');
+                    console.log('Response status:', response.status);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        devices = data.devices || [];
+                        console.log('Devices loaded from local file:', devices);
+                        return;
+                    } else {
+                        throw new Error(`Failed to load devices: ${response.status} ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading devices from file:', error);
+                    
+                    // Fallback: try to load from localStorage
+                    try {
+                        const stored = localStorage.getItem('iot-devices');
+                        if (stored) {
+                            const data = JSON.parse(stored);
+                            devices = data.devices || [];
+                            console.log('Devices loaded from localStorage:', devices);
+                            return;
+                        }
+                    } catch (localStorageError) {
+                        console.error('Fallback loading from localStorage failed:', localStorageError);
+                    }
+                    
+                    // Final fallback: empty array
+                    devices = [];
+                    console.log('Using empty devices array as fallback');
+                }
+            }
+
+            async function saveDevices() {
+                try {
+                    const data = {
+                        devices: devices,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    console.log('Saving devices to local file:', data);
+                    
+                    // Save to localStorage as primary storage
+                    localStorage.setItem('iot-devices', JSON.stringify(data));
+                    console.log('Devices saved to localStorage');
+                    
+                    // Also try to save to JSON file (for backup/portability)
+                    try {
+                        const response = await fetch('devices.json', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        if (response.ok) {
+                            console.log('Devices also saved to JSON file');
+                        } else {
+                            console.log('Could not save to JSON file (this is normal for file:// URLs)');
+                        }
+                    } catch (fileError) {
+                        console.log('File save not available (this is normal for file:// URLs)');
+                    }
+                } catch (error) {
+                    console.error('Error saving devices:', error);
+                }
+            }
+            let activeTab = 'dashboard';
+            let usageChart = null;
+
+            // --- DOM ELEMENTS ---
+            const contentArea = document.getElementById('content-area');
+            const navItems = document.querySelectorAll('.nav-item');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconSun = document.getElementById('theme-icon-sun');
+            const themeIconMoon = document.getElementById('theme-icon-moon');
+
+            // --- TEMPLATES ---
+            const createCard = (content, extraClasses = '') => `<div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ${extraClasses}">${content}</div>`;
+            
+            const createIcon = (name, classes = '', size = 24) => `<div data-lucide="${name}" class="${classes}" style="width:${size}px; height:${size}px;"></div>`;
+
+            const getDeviceControlsHTML = (device) => {
+                const isActive = device.status === 'active';
+                const disabledClass = isActive ? '' : 'opacity-50 cursor-not-allowed';
+                const disabledAttr = isActive ? '' : 'disabled';
+                
+                switch (device.type) {
+                    case 'Smart AC':
+                        return `
+                            <div class="flex items-center justify-between ${disabledClass}">
+                                <span class="font-bold text-2xl text-gray-700 dark:text-gray-200">${device.settings.temp || 22}°C</span>
+                                <div>
+                                    <button data-action="temp-up" ${disabledAttr} class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-l-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ${!isActive ? 'cursor-not-allowed' : ''}">+</button>
+                                    <button data-action="temp-down" ${disabledAttr} class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-r-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ${!isActive ? 'cursor-not-allowed' : ''}">-</button>
+                                </div>
+                            </div>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    case 'Smart Lock':
+                        return `
+                            <button data-action="toggle-lock" ${disabledAttr} class="w-full py-2 rounded-lg text-white font-semibold transition-colors ${device.settings.locked ? 'bg-red-500' : 'bg-green-500'} ${!isActive ? 'opacity-50 cursor-not-allowed' : ''}">
+                                ${device.settings.locked ? 'Locked' : 'Unlocked'}
+                            </button>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    case 'Smart Bulb':
+                    case 'Smart LED Strip':
+                        const brightness = device.settings.brightness !== undefined ? device.settings.brightness : 50;
+                        const color = device.settings.color || '#ffffff';
+                        return `
+                            <div class="space-y-3 ${disabledClass}">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Brightness</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">${brightness}%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="${brightness}" 
+                                       data-action="brightness" ${disabledAttr} 
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ${!isActive ? 'cursor-not-allowed' : ''}">
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Color</span>
+                                    <input type="color" value="${color}" 
+                                           data-action="color" ${disabledAttr} 
+                                           class="w-8 h-8 rounded border-2 border-gray-300 dark:border-gray-600 cursor-pointer ${!isActive ? 'cursor-not-allowed' : ''}">
+                                </div>
+                            </div>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    case 'Smart Switch':
+                        return `
+                            <button data-action="toggle-power" ${disabledAttr} class="w-full py-2 rounded-lg text-white font-semibold transition-colors ${device.settings.power ? 'bg-green-500' : 'bg-red-500'} ${!isActive ? 'opacity-50 cursor-not-allowed' : ''}">
+                                ${device.settings.power ? 'ON' : 'OFF'}
+                            </button>
+                            ${!isActive ? '<p class="text-xs text-red-500 mt-2">Device is offline - controls disabled</p>' : ''}`;
+                    default:
+                        return `<p class="text-sm text-gray-500 dark:text-gray-400">No specific controls</p>`;
+                }
+            };
+
+            const getDeviceCardHTML = (device) => {
+                const statusColor = device.status === 'active' ? 'blue' : 'gray';
+                const powerButtonColor = device.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500';
+                const isActive = device.status === 'active';
+                
+                return createCard(`
+                    <div class="flex flex-col justify-between h-full ${!isActive ? 'opacity-75' : ''}" data-device-id="${device.id}">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-3 rounded-full bg-${statusColor}-100 dark:bg-${statusColor}-800">
+                                        ${createIcon(device.icon, `text-${statusColor}-500 dark:text-${statusColor}-300`)}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">${device.name}</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">${device.type}</p>
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            <div class="w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}"></div>
+                                            <span class="text-xs font-medium ${isActive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                                                ${isActive ? 'Online' : 'Offline'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button data-action="toggle-power" class="p-3 rounded-full transition-all duration-300 ${powerButtonColor} hover:scale-105">
+                                        ${createIcon('power', '', 20)}
+                                    </button>
+                                    <button data-action="remove-device" class="p-2 rounded-full transition-all duration-300 bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:scale-105" title="Remove Device">
+                                        ${createIcon('trash-2', '', 16)}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                ${getDeviceControlsHTML(device)}
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700/50 flex justify-between items-center text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Usage: ${device.usage} GB</span>
+                            <span class="font-semibold text-blue-500">${device.plan}</span>
+                        </div>
+                    </div>
+                `, 'flex flex-col');
+            };
+            
+            const getDashboardHTML = () => `
+                <div class="space-y-6">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        ${createCard(`
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Total Devices</h3>
+                            <p class="text-4xl font-bold text-blue-500">${devices.length}</p>
+                        `)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Active Devices</h3>
+                            <p class="text-4xl font-bold text-green-500">${devices.filter(d => d.status === 'active').length}</p>
+                        `)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Data Usage (GB)</h3>
+                            <div class="relative h-48">
+                                <canvas id="usage-chart"></canvas>
+                            </div>
+                        `)}
+                        ${createCard(`
+                            <h3 class="font-bold text-lg mb-2">Your Progress</h3>
+                            <div class="text-center mb-4">
+                                <p class="text-4xl font-bold">${gamification.points}</p>
+                                <p class="text-purple-200">${gamification.level}</p>
+                            </div>
+                            <div class="flex justify-center space-x-2">
+                                ${gamification.badges.map(badge => `<span class="bg-white/20 text-xs font-semibold px-2 py-1 rounded-full">${badge}</span>`).join('')}
+                            </div>
+                        `, 'bg-gradient-to-br from-blue-500 to-purple-600 text-white')}
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Your Devices</h2>
+                            <a href="add-device.html" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                ${createIcon('plus-circle', '', 20)}
+                                <span>Add Device</span>
+                            </a>
+                        </div>
+                        <div id="device-list" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            ${devices.map(getDeviceCardHTML).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const getBillingHTML = () => `
+                <div>
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Plans & Subscriptions</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        ${plans.map(plan => createCard(`
+                            <div class="flex flex-col h-full">
+                                <div class="flex-grow">
+                                    <div class="flex items-center space-x-4 mb-4">
+                                        <div class="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-500">${createIcon(plan.icon, '', 32)}</div>
+                                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">${plan.name}</h3>
+                                    </div>
+                                    <p class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">$${plan.price}<span class="text-base font-normal text-gray-500 dark:text-gray-400">/mo</span></p>
+                                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                                        ${plan.features.map(f => `<li class="flex items-center">${createIcon('plus-circle', 'text-green-500 mr-2', 16)} ${f}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <button class="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">${plan.id === 'premium' ? 'Current Plan' : 'Upgrade'}</button>
+                            </div>
+                        `, 'flex flex-col')).join('')}
+                    </div>
+                    <div class="mt-12">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Value-Added Services</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            ${createCard(`
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800 dark:text-white">Cloud Backup+</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Unlimited cloud storage for all cameras.</p>
+                                    </div>
+                                    <button class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$5/mo</button>
+                                </div>
+                            `)}
+                            ${createCard(`
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800 dark:text-white">Automation Scripts</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Access community-driven automation recipes.</p>
+                                    </div>
+                                    <button class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg font-semibold">$2.99/mo</button>
+                                </div>
+                            `)}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+
+            // --- RENDER FUNCTIONS ---
+            const render = () => {
+                if (activeTab === 'dashboard') {
+                    contentArea.innerHTML = getDashboardHTML();
+                    renderChart();
+                    document.getElementById('device-list').addEventListener('click', handleDeviceInteraction);
+                } else if (activeTab === 'billing') {
+                    contentArea.innerHTML = getBillingHTML();
+                }
+                lucide.createIcons();
+            };
+
+            const renderChart = () => {
+                const ctx = document.getElementById('usage-chart')?.getContext('2d');
+                if (!ctx) return;
+                if(usageChart) usageChart.destroy();
+                usageChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: usageData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(31, 41, 55, 0.8)',
+                                borderRadius: 8,
+                                padding: 12,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb' },
+                                ticks: { color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280' }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // --- EVENT HANDLERS ---
+            const handleNavClick = (e) => {
+                const targetTab = e.currentTarget.dataset.tab;
+                if (targetTab === activeTab) return;
+                
+                activeTab = targetTab;
+                navItems.forEach(item => {
+                    if (item.dataset.tab === activeTab) {
+                        item.classList.add('bg-blue-600', 'text-white');
+                        item.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    } else {
+                        item.classList.remove('bg-blue-600', 'text-white');
+                        item.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    }
+                });
+                render();
+            };
+
+            const handleDeviceInteraction = (e) => {
+                const button = e.target.closest('button');
+                const input = e.target.closest('input');
+                const target = button || input;
+                
+                if (!target) return;
+
+                const card = e.target.closest('[data-device-id]');
+                const deviceId = parseInt(card.dataset.deviceId);
+                const device = devices.find(d => d.id === deviceId);
+                if (!device) return;
+
+                const action = target.dataset.action;
+                
+                // Handle device removal (works for all devices regardless of status)
+                if (action === 'remove-device') {
+                    if (confirm(`Are you sure you want to remove "${device.name}"? This action cannot be undone.`)) {
+                        devices = devices.filter(d => d.id !== deviceId);
+                        render();
+                        saveDevices();
+                    }
+                    return;
+                }
+                
+                // Allow power toggle for all devices (to turn them on/off)
+                if (action === 'toggle-power') {
+                    device.status = device.status === 'active' ? 'inactive' : 'active';
+                    render();
+                    saveDevices();
+                    return;
+                }
+                
+                // Prevent all other actions for inactive devices
+                if (device.status !== 'active') {
+                    console.log('Device is inactive, ignoring control action:', action);
+                    return;
+                }
+
+                // Handle active device controls
+                switch (action) {
+                    case 'temp-up':
+                        device.settings.temp = (device.settings.temp || 22) + 1;
+                        break;
+                    case 'temp-down':
+                        device.settings.temp = (device.settings.temp || 22) - 1;
+                        break;
+                    case 'toggle-lock':
+                        device.settings.locked = !device.settings.locked;
+                        break;
+                    case 'brightness':
+                        const brightnessValue = parseInt(target.value);
+                        device.settings.brightness = brightnessValue;
+                        // Update the brightness display immediately
+                        const brightnessDisplay = card.querySelector('.text-sm.text-gray-500');
+                        if (brightnessDisplay) {
+                            brightnessDisplay.textContent = `${brightnessValue}%`;
+                        }
+                        break;
+                    case 'color':
+                        device.settings.color = target.value;
+                        break;
+                }
+                render();
+                saveDevices(); // Save changes to storage
+            };
+            
+            const handleThemeToggle = () => {
+                document.documentElement.classList.toggle('dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIconSun.classList.remove('hidden');
+                    themeIconMoon.classList.add('hidden');
+                } else {
+                    themeIconSun.classList.add('hidden');
+                    themeIconMoon.classList.remove('hidden');
+                }
+                // Re-render chart with new theme colors
+                if (activeTab === 'dashboard') renderChart();
+            }
+
+            // --- INITIALIZATION ---
+            navItems.forEach(item => item.addEventListener('click', handleNavClick));
+            themeToggle.addEventListener('click', handleThemeToggle);
+
+            // Load devices and initialize
+            loadDevices().then(() => {
+                render();
+            });
+            
+            // Set initial theme icon
+            if (document.documentElement.classList.contains('dark')) {
+                themeIconSun.classList.remove('hidden');
+                themeIconMoon.classList.add('hidden');
+            }
+        });
+    </script>
+
+
+</body>
+</html>
